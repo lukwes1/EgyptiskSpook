@@ -29,6 +29,8 @@ private:
 	//Will be removed in GraphicsHandler
 	EntityRenderer* mEntityRenderer;
 
+	ID3D11Device *device;
+
 	bool footstepsPlaying;
 	int mNrOfKeys;
 
@@ -43,6 +45,7 @@ public:
 	virtual ~EntityHandler();
 
 	void loadMap(ID3D11Device* device);
+	void setDevice(ID3D11Device *device);
 
 	void setupTraps(AIHandler* ai, ID3D11Device* device, ID3D11DeviceContext* context);
 	void setupPlayer(ID3D11Device* device, ID3D11DeviceContext* context, CameraClass* camera);
@@ -50,6 +53,8 @@ public:
 	void setupAudioManager(AudioManager* manager);
 
 	void update(ID3D11DeviceContext* context, float dt);
+
+	void addBlock(DirectX::SimpleMath::Vector3 position, DirectX::SimpleMath::Vector3 size);
 
 	EntityRenderer* getEntityRenderer();
 	Player* getPlayer();

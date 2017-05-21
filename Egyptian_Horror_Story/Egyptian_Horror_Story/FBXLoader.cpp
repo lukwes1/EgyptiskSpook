@@ -284,7 +284,6 @@ FBXLoader::~FBXLoader()
 
 bool FBXLoader::loadMesh(std::vector<EntityStruct::VertexStruct>& verticeArray, std::string filename)
 {
-
 	if (this->mFbxManager == nullptr)
 	{
 		this->mFbxManager = FbxManager::Create();

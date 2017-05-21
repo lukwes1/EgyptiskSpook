@@ -1,6 +1,11 @@
 #include "EntityHandler.h"
 #define ENEMY_KEY 400
 #define BASE_TRAP_KEY 1000
+using namespace DirectX::SimpleMath;
+
+void EntityHandler::setDevice(ID3D11Device *device) {
+	this->device = device;
+}
 
 void EntityHandler::hardcodedMap(ID3D11Device* device)
 {
@@ -1288,6 +1293,15 @@ void EntityHandler::hardcodedMap(ID3D11Device* device)
 	this->mEntityRenderer->loadObject(device, wall->getKey(), testData34, 6,  sizeof(DirectX::XMFLOAT4X4), WALLTEXTURE);
 }
 
+void EntityHandler::addBlock(Vector3 position, Vector3 size) {
+	std::vector<EntityStruct::VertexStruct> temp;
+	mLoader.loadMesh(temp, std::string("testCube.fbx"));
+
+	mEntityRenderer->loadObject(device, mNrOfKeys++, temp.data(), temp.size(),
+		sizeof(DirectX::XMFLOAT4X4), WALLTEXTURE,
+		(Matrix::CreateScale(size) * Matrix::CreateTranslation(position)).Transpose());
+}
+
 void EntityHandler::loadEntityModel(std::string modelName, wchar_t* textureName, Entity* entity, ID3D11Device* device)
 {
 	std::vector<EntityStruct::VertexStruct> temp;
@@ -1301,7 +1315,7 @@ void EntityHandler::loadEntityModel(std::string modelName, wchar_t* textureName,
 		temp.size(),
 		sizeof(DirectX::XMFLOAT4X4),
 		textureName,
-		entity->getPosition()
+		Matrix::CreateTranslation(entity->getPosition())
 		);
 
 }
@@ -1437,13 +1451,6 @@ void EntityHandler::setupPlayer(ID3D11Device* device, ID3D11DeviceContext* conte
 {
 	this->mPlayer = new Player(camera, device, context, this->mNrOfKeys++, this->mEntityRenderer->getGraphicsData());
 	this->mPlayer->setPosition(DirectX::SimpleMath::Vector3(0, 0, 4));
-
-	this->mEnemy = new Enemy(ENEMY_KEY);
-
-	this->mEnemy->setPosition(DirectX::SimpleMath::Vector3(0, 0, 5));
-
-	this->loadEntityModel("ModelTestTri.fbx", L"dargon_bump.jpg", this->mEnemy, device);
-			
 }
 
 EntityHandler::EntityHandler()
@@ -1455,7 +1462,6 @@ EntityHandler::EntityHandler()
 EntityHandler::~EntityHandler()
 {
 	delete this->mPlayer;
-	delete this->mEnemy;
 	delete this->mFlashlightModel;
 	delete this->mLevel;
 
@@ -1488,12 +1494,12 @@ void EntityHandler::setupEntities(ID3D11Device* device)
 
 	this->loadEntityModel("flashLight.fbx", L"dargon_bump.jpg", mFlashlightModel, device);
 
-
+	/*
 	Treasure* tres = new Treasure(500, 20.f);
 
 	this->loadEntityModel("treasure1.fbx", L"sand.bmp", tres, device);
 
-	this->mTreasures.push_back(tres);
+	this->mTreasures.push_back(tres); */
 }
 
 void EntityHandler::setupAudioManager(AudioManager* manager)
@@ -1512,6 +1518,7 @@ void EntityHandler::update(ID3D11DeviceContext* context, float dt)
 	DirectX::SimpleMath::Vector3 prevPos = this->mPlayer->getPosition();
 
 	this->mPlayer->updatePosition(dt);
+	/*
 	this->mEnemy->updatePosition(this->mEntityRenderer->getGraphicsData(), context, this->mPlayer->getPosition());
 
 	for (auto& trap : this->mTraps) {
@@ -1524,6 +1531,7 @@ void EntityHandler::update(ID3D11DeviceContext* context, float dt)
 	this->updateCollision();
 
 	//this->updateAudio();
+	*/
 }
 
 EntityRenderer* EntityHandler::getEntityRenderer()

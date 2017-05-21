@@ -24,13 +24,14 @@ void Game::setupEntityHandler()
 		this->mCamera);
 
 	this->mEntityHandler->setupEntities(this->mGraphics->getDevice());
+	this->mEntityHandler->setDevice(this->mGraphics->getDevice());
 
 	//this is neccessary for the traps
-	this->mAIHandler = new AIHandler(mEntityHandler->getEnemy(), mEntityHandler->getPlayer());
+//	this->mAIHandler = new AIHandler(mEntityHandler->getEnemy(), mEntityHandler->getPlayer());
 
-	this->mEntityHandler->setupTraps(this->mAIHandler, this->mGraphics->getDevice(), this->mGraphics->getDeviceContext());
+	//this->mEntityHandler->setupTraps(this->mAIHandler, this->mGraphics->getDevice(), this->mGraphics->getDeviceContext());
 
-	mapLoader.setupMapLoader();
+	mapLoader.setupMapLoader(mEntityHandler);
 	mapLoader.loadMap("../Resource/Map/mapTest.lwm");
 }
 
@@ -59,18 +60,12 @@ Game::~Game()
 	delete this->mStateHandler;
 	delete this->mCamera;
 	delete this->mEntityHandler;
-	delete this->mAIHandler;
 }
 
 void Game::updateGame(float dt)
 {
 	this->mEntityHandler->update(this->mGraphics->getDeviceContext(), dt);
 	this->mCamera->update(this->mGraphics->getDeviceContext());
-
-	this->mAIHandler->update(dt);
-	if (this->mAIHandler->getNavigationTexture() != nullptr)
-		mGuiRenderer->setNavigationTest(mGraphics->getDevice(), this->mAIHandler->getNavigationTexture(),
-			this->mAIHandler->getNavMeshWidth(), this->mAIHandler->getNavMeshHeight());
 
 	this->mCamera->updateRotation(this->mGraphics->getDeviceContext());
 }

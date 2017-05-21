@@ -12,14 +12,15 @@ LuaMapLoader::LuaMapLoader()
 	mapLoaderLoaded = false;
 }
 
-
 LuaMapLoader::~LuaMapLoader()
 {
 	if (state)
 		lua_close(state);
 }
 
-void LuaMapLoader::setupMapLoader() {
+void LuaMapLoader::setupMapLoader(EntityHandler *entities) {
+	this->entities = entities;
+
 	state = luaL_newstate();
 	luaL_openlibs(state);
 
@@ -35,6 +36,10 @@ void LuaMapLoader::setupMapLoader() {
 
 void LuaMapLoader::loadFunctions() {
 	LuaFunctions::addFunction(state, LuaFunctions::Log, "Log");
+
+	void *data[] = {entities};
+	LuaFunctions::addFunctionClosure(state, LuaFunctions::drawBlock,
+		"DrawBlock", data, ARRAYSIZE(data));
 }
 
 void LuaMapLoader::loadMap(char const *path) {

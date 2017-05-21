@@ -10,9 +10,9 @@ function templateNewMethod(self, o)
 end
 
 function createObject(inName, class)
-	if (class == "ScriptCollider") then
+	if (class == ScriptCollider.class) then
 		return ScriptCollider:new{name = inName}
-	elseif (class == "Solid") then
+	elseif (class == Solid.class) then
 		return Solid:new{name = inName}
 	end
 end
@@ -61,8 +61,8 @@ Solid = LoadableObject:new{position = Vector:new(), size = Vector:new(), class =
 
 function Solid:__tostring()
 	return self:baseString() ..
-	"\nposition " .. tostring(self.position) ..
-	"\nsize " .. tostring(self.size) ..
+	"\n\tposition " .. tostring(self.position) ..
+	"\n\tsize " .. tostring(self.size) ..
 	"\nend"
 end	
 
@@ -73,9 +73,9 @@ ScriptCollider = LoadableObject:new{position = Vector:new(), size = Vector:new()
 
 function ScriptCollider:__tostring()
 	return self:baseString() .. 
-		   "\nscript " .. self.script ..
-		   "\nposition " .. tostring(self.position) ..
-		   "\nsize " .. tostring(self.size) ..
+		   "\n\tscript \"" .. self.script .. "\"" ..
+		   "\n\tposition " .. tostring(self.position) ..
+		   "\n\tsize " .. tostring(self.size) ..
 		   "\nend"
 end	
 
@@ -114,7 +114,9 @@ function saveMap(path)
 	io.output(path)
 	
 	for k, v in pairs(allObjects) do
-		io.write(tostring(v))
+		if v.name ~= "" then
+			io.write(tostring(v), "\n\n")
+		end
 	end
 	
 	io.close()
@@ -122,6 +124,6 @@ end
 
 function loadObjects()
 	for k, v in pairs(allObjects) do
-		print(tostring(v))
+		DrawBlock(v.position, v.size)
 	end
 end
