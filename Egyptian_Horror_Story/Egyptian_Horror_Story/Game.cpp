@@ -31,7 +31,8 @@ void Game::setupEntityHandler()
 
 	//this->mEntityHandler->setupTraps(this->mAIHandler, this->mGraphics->getDevice(), this->mGraphics->getDeviceContext());
 
-	mapLoader.setupMapLoader(mEntityHandler);
+	luaHandler.loadLua("scripts/ScriptObjects.lua");
+	mapLoader.setupMapLoader(mEntityHandler, &luaHandler);
 	mapLoader.loadMap("../Resource/Map/mapTest.lwm");
 }
 
@@ -68,6 +69,7 @@ void Game::updateGame(float dt)
 	this->mCamera->update(this->mGraphics->getDeviceContext());
 
 	this->mCamera->updateRotation(this->mGraphics->getDeviceContext());
+	this->luaHandler.update(this->mEntityHandler->getPlayer());
 }
 
 void Game::draw() {

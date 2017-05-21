@@ -10,6 +10,9 @@ LuaMapLoader::LuaMapLoader()
 {
 	state = nullptr;
 	mapLoaderLoaded = false;
+
+	this->entities = nullptr;
+	this->luaHandler = nullptr;
 }
 
 LuaMapLoader::~LuaMapLoader()
@@ -18,8 +21,9 @@ LuaMapLoader::~LuaMapLoader()
 		lua_close(state);
 }
 
-void LuaMapLoader::setupMapLoader(EntityHandler *entities) {
+void LuaMapLoader::setupMapLoader(EntityHandler *entities, LuaHandler *luaHandler) {
 	this->entities = entities;
+	this->luaHandler = luaHandler;
 
 	state = luaL_newstate();
 	luaL_openlibs(state);
@@ -29,9 +33,8 @@ void LuaMapLoader::setupMapLoader(EntityHandler *entities) {
 	int error = luaL_loadfile(state, PATH "mapLoader" L) ||
 		lua_pcall(state, 0, 0, 0); //Load the file
 
-	if (handleError(state, error)) { // Handle error
+	if (LuaFunctions::handleError(state, error))
 		mapLoaderLoaded = true;
-	}
 }
 
 void LuaMapLoader::loadFunctions() {
@@ -40,6 +43,9 @@ void LuaMapLoader::loadFunctions() {
 	void *data[] = {entities};
 	LuaFunctions::addFunctionClosure(state, LuaFunctions::drawBlock,
 		"DrawBlock", data, ARRAYSIZE(data));
+	data[0] = { luaHandler };
+	LuaFunctions::addFunctionClosure(state, LuaFunctions::addCollider,
+		"AddCollider", data, ARRAYSIZE(data));
 }
 
 void LuaMapLoader::loadMap(char const *path) {
@@ -47,22 +53,11 @@ void LuaMapLoader::loadMap(char const *path) {
 		lua_getglobal(state, "loadMap");
 		lua_pushstring(state, path);
 
-		if (handleError(state, lua_pcall(state, 1, 0, 0))) {
+		if (LuaFunctions::handleError(state, lua_pcall(state, 1, 0, 0))) {
 			// map loaded! i hope.. ??
 
 		}
 	}
-}
-
-/* A helper method */
-bool inline LuaMapLoader::handleError(lua_State *state, int error) {
-	if (error) {
-		SDL_Log("Error: %s", lua_tostring(state, -1));
-		lua_pop(state, 1);
-		return false;
-	}
-
-	return true;
 }
 
 bool LuaMapLoader::isMapLoaderLoaded() {

@@ -1,14 +1,15 @@
-#include "LuaFunctions.h"
 #include <SDL.h>
 #include <string>
-#include "EntityHandler.h"
 
+#include "LuaFunctions.h"
+#include "LuaHandler.h"
+#include "EntityHandler.h"
 #include "Direct3DHeader.h"
 #include "SimpleMath.h"
 
 using namespace DirectX::SimpleMath;
 
-#define touserdata(state, ptr, index) static_cast<ptr> \
+#define getuserdata(state, ptr, index) static_cast<ptr> \
 		(lua_touserdata(state, lua_upvalueindex(index))) 
 
 LuaFunctions::LuaFunctions()
@@ -22,8 +23,8 @@ LuaFunctions::~LuaFunctions()
 
 int LuaFunctions::Log(lua_State *state) {
 	int args = lua_gettop(state);
-	std::string print = "";
 
+	std::string print = "";
 	for (int i = 0; i < args; i++) {
 		if (lua_isstring(state, -1)) {
 			print = lua_tostring(state, -1) + print;
@@ -36,34 +37,13 @@ int LuaFunctions::Log(lua_State *state) {
 }
 
 int LuaFunctions::drawBlock(lua_State *state) {
-	EntityHandler *entityHandler = touserdata(state, EntityHandler*, 1);
-	std::string var[3] = { "x", "y", "z" };
-	float f[3] = { 0, 0, 0 };
+	EntityHandler *entityHandler = getuserdata(state, EntityHandler*, 1);
+	float pos[3] = { 0,0,0 }, size[3] = { 0,0,0 };
 
 	if (lua_istable(state, -1) && lua_istable(state, -2)) {
-		for (int i = 0; i < 3; i++) {
-			lua_pushstring(state, var[i].c_str());
-			lua_gettable(state, -2);
-			if (lua_isnumber(state, -1)) {
-				f[i] = lua_tonumber(state, -1);
-			}
-			lua_pop(state, 1);
-		}
-		Vector3 size(f[0], f[1], f[2]);
-		lua_pop(state, 1);
-
-		for (int i = 0; i < 3; i++) {
-			lua_pushstring(state, var[i].c_str());
-			lua_gettable(state, -2);
-			if (lua_isnumber(state, -1)) {
-				f[i] = lua_tonumber(state, -1);
-			}
-			lua_pop(state, 1);
-		}
-		Vector3 position(f[0], f[1], f[2]);
-		lua_pop(state, 1);
-
-		entityHandler->addBlock(position, size);
+		loadSizeAndPosition(state, pos, size);
+		entityHandler->addBlock(Vector3(pos[0], pos[1], pos[2]), Vector3(size[0], size[1], size[2]));
+		lua_pop(state, 2); //pop the two tables
 	}
 
 	return 0;
@@ -83,4 +63,83 @@ void LuaFunctions::addFunctionClosure(lua_State *state,
 
 	lua_pushcclosure(state, function, size);
 	lua_setglobal(state, name);
+}
+
+int LuaFunctions::addCollider(lua_State *state) {
+	LuaHandler *handler = getuserdata(state, LuaHandler*, 1);
+
+	if (lua_istable(state, -1)) {
+		float pos[3] = { 0,0,0 }, size[3] = { 0,0,0 };
+		char const *name = "", *id = "";
+
+		lua_pushstring(state, "position");
+		lua_gettable(state, -2);
+		lua_pushstring(state, "size");
+		lua_gettable(state, -3);
+
+		if (lua_istable(state, -1) && lua_istable(state, -2)) {
+			loadSizeAndPosition(state, pos, size);
+		}
+		lua_pop(state, 2);
+
+		lua_pushstring(state, "name");
+		lua_gettable(state, -2);
+
+		if (lua_isstring(state, -1)) {
+			name = lua_tostring(state, -1);
+		}
+		lua_pop(state, 1);
+
+		lua_pushstring(state, "id");
+		lua_gettable(state, -2);
+
+		if (lua_isstring(state, -1)) {
+			id = lua_tostring(state, -1);
+		}
+		lua_pop(state, 1);
+
+		LuaHandler::Collider collider;
+		collider.position = Vector3(pos[0], pos[1], pos[2]);
+		collider.size = Vector3(size[0], size[1], size[2]);
+		collider.name = name;
+		collider.id = id;
+
+		handler->addCollider(collider);
+	}
+	lua_pop(state, 1);
+
+	return 0;
+}
+
+/* A helper method */
+bool LuaFunctions::handleError(lua_State *state, int error) {
+	if (error) {
+		SDL_Log("Error: %s", lua_tostring(state, -1));
+		lua_pop(state, 1);
+		return false;
+	}
+
+	return true;
+}
+
+void LuaFunctions::loadSizeAndPosition(lua_State *state, float pos[3], float size[3]) {
+	std::string var[3] = { "x", "y", "z" };
+
+	for (int i = 0; i < 3; i++) {
+		lua_pushstring(state, var[i].c_str());
+		lua_gettable(state, -2);
+		if (lua_isnumber(state, -1)) {
+			size[i] = lua_tonumber(state, -1);
+		}
+		lua_pop(state, 1);
+	}
+
+	for (int i = 0; i < 3; i++) {
+		lua_pushstring(state, var[i].c_str());
+		lua_gettable(state, -3);
+		if (lua_isnumber(state, -1)) {
+			pos[i] = lua_tonumber(state, -1);
+		}
+		lua_pop(state, 1);
+	} 
 }

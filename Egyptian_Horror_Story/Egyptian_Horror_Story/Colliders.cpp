@@ -463,15 +463,18 @@ bool Capsule::capsuleVSCapsule()
 	return false;
 }
 
-AABB::AABB(DirectX::SimpleMath::Vector3 point, DirectX::SimpleMath::Vector3 scale) {
-	this->mPoint = point; this->mScale = scale;
-}
-
 AABB::AABB(DirectX::SimpleMath::Vector3 point, DirectX::SimpleMath::Vector3 x, DirectX::SimpleMath::Vector3 y, DirectX::SimpleMath::Vector3 z)
 {
 	this->mPoint = (x + y + z) / 2;
 	this->mPoint = point + this->mPoint;
 	this->mScale = DirectX::SimpleMath::Vector3(abs(x.x) / 2, abs(y.y) / 2, abs(z.z) / 2);
+}
+
+AABB::AABB(DirectX::SimpleMath::Vector3 point, DirectX::SimpleMath::Vector3 size)
+{
+	DirectX::SimpleMath::Vector3 halfSize = size * 0.5f;
+	this->mPoint = point + (size * 0.5f);
+	this->mScale = DirectX::SimpleMath::Vector3(abs(halfSize.x), abs(halfSize.y), abs(halfSize.z));
 }
 
 DirectX::SimpleMath::Vector3 AABB::calculateNormal(Capsule & other)

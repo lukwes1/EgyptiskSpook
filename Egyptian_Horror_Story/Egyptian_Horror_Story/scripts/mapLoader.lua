@@ -66,20 +66,16 @@ function Solid:__tostring()
 	"\nend"
 end	
 
-Solid.new = templateNewMethod
-
 -- ScriptCollider class, a coded collider, will run a script on collision, that's pretty much it
-ScriptCollider = LoadableObject:new{position = Vector:new(), size = Vector:new(), script = "", class = "ScriptCollider"}
+ScriptCollider = LoadableObject:new{position = Vector:new(), size = Vector:new(), class = "ScriptCollider", id = "0"}
 
 function ScriptCollider:__tostring()
 	return self:baseString() .. 
-		   "\n\tscript \"" .. self.script .. "\"" ..
+		   "\n\tid \"" .. self.id .. "\"" ..
 		   "\n\tposition " .. tostring(self.position) ..
 		   "\n\tsize " .. tostring(self.size) ..
 		   "\nend"
 end	
-
-ScriptCollider.new = templateNewMethod
 
 -- Functions C++ should call
 allObjects = {}
@@ -125,5 +121,8 @@ end
 function loadObjects()
 	for k, v in pairs(allObjects) do
 		DrawBlock(v.position, v.size)
+		if getmetatable(v) == ScriptCollider then
+			AddCollider(v)
+		end
 	end
 end

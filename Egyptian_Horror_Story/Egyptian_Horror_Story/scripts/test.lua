@@ -1,5 +1,9 @@
-hello = "helloxxx"
+-- Script should have update and on collision methods 
+print = Log
 
-PrintWorld = function()
-	return 'Hello World :('
+function update()
+end
+
+function onPlayerCollision()
+	print("hi")
 end

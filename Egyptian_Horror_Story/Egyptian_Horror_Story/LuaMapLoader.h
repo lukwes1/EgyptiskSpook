@@ -3,20 +3,20 @@
 
 #include "lua.hpp"
 #include "EntityHandler.h"
+#include "LuaHandler.h"
 
 class LuaMapLoader
 {
 private:
 	lua_State *state;
 	EntityHandler *entities;
+	LuaHandler *luaHandler;
 	bool mapLoaderLoaded;
-
-	bool handleError(lua_State *state, int error);
 public:
 	LuaMapLoader();
 	~LuaMapLoader();
 	
-	void setupMapLoader(EntityHandler *entities);
+	void setupMapLoader(EntityHandler *entities, LuaHandler *luaHandler);
 	void loadFunctions();
 	void loadMap(char const *path);
 

@@ -3,8 +3,8 @@ platform : Solid
 	size 25 2 25
 end
 
-jumpPad1 : ScriptCollider
-	script "sup"
+NormalCoin : ScriptCollider
+	id "0"
 	position 65 2 65
 	size 5 5 5
 end
