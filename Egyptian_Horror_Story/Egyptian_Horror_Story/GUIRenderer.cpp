@@ -8,6 +8,7 @@ GUIRenderer::GUIRenderer() : Renderer(){
 
 	// for testing
 	navTest = nullptr;
+	mDirection = 0;
 }
 
 GUIRenderer::~GUIRenderer() {
@@ -31,15 +32,17 @@ void GUIRenderer::setup(ID3D11Device *device, ShaderHandler &shaders) {
 	// Add new GUI elements here
 	this->mElements.push_back(GUI_ELEMENT{ Vector3(-0.2f, 0.2f, 0), dimension });
 	this->mElements.push_back(GUI_ELEMENT{ Vector3(-0.2f, -0.2f, 0), dimension });
+	this->mElements.push_back(GUI_ELEMENT{ Vector3(-0.4f, 0.6f, 0), Vector2(0.8f, 0.3f) });
 
 	// Add the texture here, texture ID = index of element in mElements, this class got own graphicsdata, so infinite ids is availabe (not inf)
 	mGraphicsData->loadTexture(0, L"play.png", device);
 	mGraphicsData->loadTexture(1, L"options.png", device);
+	mGraphicsData->loadTexture(2, L"splash.png", device);
 
 	D3D11_SUBRESOURCE_DATA data;
 	data.pSysMem = &this->mElements[0];
 
-	mGraphicsData->createVertexBuffer(0, sizeof(GUI_ELEMENT) * this->mElements.size(), &data, device);
+	mGraphicsData->createVertexBuffer(0, sizeof(GUI_ELEMENT) * this->mElements.size(), &data, device, true);
 }
 
 void GUIRenderer::loadButtons(MenuHandler &menuHandler) {
@@ -59,6 +62,31 @@ void GUIRenderer::render(ID3D11DeviceContext *context, ShaderHandler &shaders, G
 }
 
 void GUIRenderer::renderStartMenu(ID3D11DeviceContext *context, ShaderHandler &shaders) {
+	if (mDirection == 0) {
+		this->mElements[2].dimensions.x += 0.0005f;
+		this->mElements[2].pos.x -= 0.00025f;
+		this->mElements[2].dimensions.y += 0.0005f;
+		this->mElements[2].pos.y -= 0.00025f;
+
+		if (mElements[2].dimensions.x > 1.0f) {
+			mDirection = 1;
+		}
+	}
+	else {
+		this->mElements[2].dimensions.x -= 0.0005f;
+		this->mElements[2].pos.x += 0.00025f;
+		this->mElements[2].dimensions.y -= 0.0005f;
+		this->mElements[2].pos.y += 0.00025f;
+
+		if (mElements[2].dimensions.x < 0.6f) {
+			mDirection = 0;
+		}
+	}
+	D3D11_MAPPED_SUBRESOURCE res;
+	context->Map(mGraphicsData->getVertexBuffer(0), 0, D3D11_MAP_WRITE_DISCARD, NULL, &res);
+	memcpy(res.pData, &this->mElements[0], sizeof(GUI_ELEMENT) * mElements.size());
+	context->Unmap(mGraphicsData->getVertexBuffer(0), 0);
+
 	UINT stride = sizeof(GUI_ELEMENT), offset = 0;
 	ID3D11Buffer *buffer = this->mGraphicsData->getVertexBuffer(0);
 	ID3D11ShaderResourceView *srv;

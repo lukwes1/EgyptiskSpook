@@ -18,7 +18,7 @@ void Game::setupRenderers()
 void Game::setupEntityHandler()
 {
 
-	this->mEntityHandler->setupAudioManager(&this->mAudioManager);
+	//this->mEntityHandler->setupAudioManager(&this->mAudioManager);
 	this->mEntityHandler->setupPlayer(this->mGraphics->getDevice(),
 		this->mGraphics->getDeviceContext(),
 		this->mCamera);
@@ -29,6 +29,9 @@ void Game::setupEntityHandler()
 	this->mAIHandler = new AIHandler(mEntityHandler->getEnemy(), mEntityHandler->getPlayer());
 
 	this->mEntityHandler->setupTraps(this->mAIHandler, this->mGraphics->getDevice(), this->mGraphics->getDeviceContext());
+
+	mapLoader.setupMapLoader();
+	mapLoader.loadMap("../Resource/Map/mapTest.lwm");
 }
 
 Game::Game(GraphicsHandler* mGraphicsHandler, OptionsHandler* options) {

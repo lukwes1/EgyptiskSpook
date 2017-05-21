@@ -1482,7 +1482,7 @@ void EntityHandler::loadMap(ID3D11Device* device)
 void EntityHandler::setupEntities(ID3D11Device* device)
 {
 	//this->hardcodedMap(device);
-	this->loadMap(device);
+	// this->loadMap(device);
 
 	this->mFlashlightModel = new Entity(this->mPlayer->getLight()->getGraphicsKey());
 
@@ -1523,7 +1523,7 @@ void EntityHandler::update(ID3D11DeviceContext* context, float dt)
 
 	this->updateCollision();
 
-	this->updateAudio();
+	//this->updateAudio();
 }
 
 EntityRenderer* EntityHandler::getEntityRenderer()

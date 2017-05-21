@@ -61,6 +61,12 @@
     <Filter Include="Source Files\AI">
       <UniqueIdentifier>{e7e587e0-1a0e-4f76-8f37-ef478723e4ed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Lua Project">
+      <UniqueIdentifier>{6fbb58e9-5f48-4442-922b-2cf40b5a57a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Lua Project">
+      <UniqueIdentifier>{21de9cee-8df0-4949-be0b-608ea48e09c5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ShadowVS.hlsl">
@@ -173,6 +179,15 @@
     <ClCompile Include="MenuHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LuaHandler.cpp">
+      <Filter>Source Files\Lua Project</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaFunctions.cpp">
+      <Filter>Source Files\Lua Project</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaMapLoader.cpp">
+      <Filter>Source Files\Lua Project</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h">
@@ -258,6 +273,15 @@
     </ClInclude>
     <ClInclude Include="MenuHandler.h">
       <Filter>Header Files\Game classes</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaHandler.h">
+      <Filter>Header Files\Lua Project</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaFunctions.h">
+      <Filter>Header Files\Lua Project</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaMapLoader.h">
+      <Filter>Header Files\Lua Project</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

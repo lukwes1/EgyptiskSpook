@@ -6,6 +6,10 @@
 #include "GUIRenderer.h"
 #include "MenuHandler.h"
 
+// Lua Lua
+#include "LuaMapLoader.h"
+#include "LuaHandler.h"
+
 class Game
 {
 private:
@@ -27,6 +31,10 @@ private:
 	AudioManager mAudioManager;
 	OptionsHandler* mOptionHandler;
 	MenuHandler mMenuHandler;
+
+	// LUA LUA
+	LuaMapLoader mapLoader;
+	LuaHandler luaHandler;
 
 	void setupRenderers();
 	void setupEntityHandler();

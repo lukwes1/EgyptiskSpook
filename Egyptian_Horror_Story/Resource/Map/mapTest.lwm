@@ -1,0 +1,10 @@
+platform : Solid
+position 50 50 50
+	size 25 1 25
+end
+
+jumpPad1 : ScriptCollider
+	script "jumppad.lua"
+	position 65 51 65
+	size 5 5 5
+end

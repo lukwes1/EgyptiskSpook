@@ -18,6 +18,7 @@ private:
 
 	std::vector<GUI_ELEMENT> mElements;
 	ID3D11ShaderResourceView *navTest, *menu;
+	int mDirection;
 public:
 	GUIRenderer();
 	GUIRenderer(GUIRenderer const &renderer) = delete;
