@@ -1,9 +1,9 @@
 #include "Player.h"
 #include <SDL.h>
 
-#define SPEED 15.f;
+#define SPEED_DROPOFF 5.f
 
-#define GRAVITY 2.5f // Gravity per second
+#define GRAVITY 0.5f // Gravity per second
 #define GROUND_Y 0.f // Ground position
 #define JUMP_START_VELOCITY 0.95f // Start velocity after jumping, reduced by GRAVITY after a second (lerping)
 
@@ -63,13 +63,19 @@ Player::~Player()
 	delete this->col;
 }
 
-void Player::updatePosition(float dt)
+void Player::updatePosition(float dt, float groundY)
 {
+	if (mSpeed > SPEED) {
+		mSpeed -= SPEED_DROPOFF * dt;
+		if (mSpeed < SPEED)
+			mSpeed = SPEED;
+	}
+
 	if (!this->mIsPickingTres)
 	{
 		this->mPrevPos = this->getPosition();
 		computeVelocity();
-		handleJumping(dt);
+		handleJumping(dt, groundY);
 		handleSprinting(dt);
 
 		DirectX::SimpleMath::Vector3 newPos = this->getPosition() + this->mVelocity * mSpeed * getMovementMultiplier() * dt;
@@ -110,17 +116,18 @@ void Player::updatePosition(float dt)
 
 }
 
-void Player::handleJumping(float dt) {
+void Player::handleJumping(float dt, float groundY) {
 	this->mVelocity.y = 0;
 	this->mVelocity.Normalize(); // Norm to make speed forward speed same if you look up or down
+
 	if (this->mJumping) {
 		this->mJumpingVelocity -= GRAVITY * dt;
 		this->mVelocity.y = mJumpingVelocity;
 
-		if (getPosition().y + this->mVelocity.y * mSpeed * dt <= GROUND_Y) {
+		if (getPosition().y + this->mVelocity.y * mSpeed * dt <= groundY) {
 			// set position to ground y
 			DirectX::SimpleMath::Vector3 newPos = getPosition();
-			newPos.y = GROUND_Y;
+			newPos.y = groundY;
 			setPosition(newPos);
 
 			// reset velocity
@@ -128,6 +135,9 @@ void Player::handleJumping(float dt) {
 			this->mJumping = false;
 			this->mVelocity.Normalize();
 		}
+	}
+	else if (getPosition().y > groundY) {
+		mJumping = true;
 	}
 }
 
@@ -356,4 +366,16 @@ void Player::damage() {
 
 bool Player::isDamaged() const {
 	return damaged;
+}
+
+void Player::setSpeed(float speed) {
+	this->mSpeed = speed;
+}
+
+bool Player::isJumping() const {
+	return mJumping;
+}
+
+bool Player::isRunning() const {
+	return mSprinting;
 }

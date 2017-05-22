@@ -1293,13 +1293,24 @@ void EntityHandler::hardcodedMap(ID3D11Device* device)
 	this->mEntityRenderer->loadObject(device, wall->getKey(), testData34, 6,  sizeof(DirectX::XMFLOAT4X4), WALLTEXTURE);
 }
 
-void EntityHandler::addBlock(Vector3 position, Vector3 size) {
+int EntityHandler::addBlock(Vector3 position, Vector3 size, AABB *aabb, bool solid, int texId) {
 	std::vector<EntityStruct::VertexStruct> temp;
 	mLoader.loadMesh(temp, std::string("testCube.fbx"));
 
-	mEntityRenderer->loadObject(device, mNrOfKeys++, temp.data(), temp.size(),
-		sizeof(DirectX::XMFLOAT4X4), WALLTEXTURE,
+	Entity *block = new Entity(mNrOfKeys++, aabb, solid);
+	block->setPosition(position);
+	block->setScale(size);
+
+	wchar_t *textures[] = { L"coin.png", L"block.png" };
+	if (texId > ARRAYSIZE(textures)) texId = 0;
+
+	mEntityRenderer->loadObject(device, block->getKey(), temp.data(), temp.size(),
+		sizeof(DirectX::XMFLOAT4X4), textures[texId],
 		(Matrix::CreateScale(size) * Matrix::CreateTranslation(position)).Transpose());
+
+	this->mEntities.push_back(block);
+
+	return mEntities.size() - 1;
 }
 
 void EntityHandler::loadEntityModel(std::string modelName, wchar_t* textureName, Entity* entity, ID3D11Device* device)
@@ -1517,7 +1528,10 @@ void EntityHandler::update(ID3D11DeviceContext* context, float dt)
 {
 	DirectX::SimpleMath::Vector3 prevPos = this->mPlayer->getPosition();
 
-	this->mPlayer->updatePosition(dt);
+	this->mPlayer->updatePosition(dt, getPlayerGroundY(mPlayer->getPosition()));
+
+	for (auto* entity : this->mEntities)
+		entity->updateTransformBuffer(context, mEntityRenderer->getGraphicsData());
 	/*
 	this->mEnemy->updatePosition(this->mEntityRenderer->getGraphicsData(), context, this->mPlayer->getPosition());
 
@@ -1534,6 +1548,34 @@ void EntityHandler::update(ID3D11DeviceContext* context, float dt)
 	*/
 }
 
+float EntityHandler::getPlayerGroundY(Vector3 const &position) const {
+	Vector3 o = position;
+	AABB *aabb;
+	Vector3 p, s;
+
+	float temp = 0, gy;
+
+	for (auto& entity : mEntities) {
+		if (entity->isSolid()) {
+			aabb = entity->getAABB();
+			p = aabb->mPoint;
+			s = aabb->mScale;
+			SDL_Log("PY: %f, OY: %f", o.y, p.y);
+			if (o.x >= p.x - s.x && o.x <= p.x + s.x) {
+				if (o.z >= p.z - s.z && o.z <= p.z + s.z) {
+					gy = p.y + s.y;
+					if (gy < o.y + 0.5f && gy > temp) {
+						SDL_Log("new gr! %f ", gy);
+						temp = gy;
+					}
+				}
+			}
+		}
+	}
+
+	return temp;
+}
+
 EntityRenderer* EntityHandler::getEntityRenderer()
 {
 	return this->mEntityRenderer;
@@ -1547,4 +1589,8 @@ Player* EntityHandler::getPlayer()
 Enemy* EntityHandler::getEnemy()
 {
 	return this->mEnemy;
+}
+
+Entity* EntityHandler::getEntity(int index) const {
+	return this->mEntities[index];
 }

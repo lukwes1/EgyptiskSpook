@@ -1,6 +1,8 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#define SPEED 15.f
+
 #include "Entity.h"
 #include "CameraClass.h"
 #include "Light.h"
@@ -49,8 +51,8 @@ public:
 	Player(CameraClass* camera, ID3D11Device* device, ID3D11DeviceContext* context, int grapchicsKey, GraphicsData* gData);
 	virtual ~Player();
 
-	void updatePosition(float dt);
-	void handleJumping(float dt);
+	void updatePosition(float dt, float groundY);
+	void handleJumping(float dt, float groundY);
 
 	bool handleKeyboardPress(SDL_KeyboardEvent const &key);
 	bool handleKeyboardRelease(SDL_KeyboardEvent const &key);
@@ -65,9 +67,12 @@ public:
 
 	void setPosition(DirectX::SimpleMath::Vector3 pos);
 	void setPrevPos(DirectX::SimpleMath::Vector3 pos);
+	void setSpeed(float speed = SPEED);
 
 	void damage();
 	bool isDamaged() const;
+	bool isJumping() const;
+	bool isRunning() const;
 };
 
 #endif

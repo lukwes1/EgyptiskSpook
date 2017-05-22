@@ -23,6 +23,8 @@ function loadObject(line, currentObject)
 
 	if getmetatable(memberVar) == Vector then -- Vector
 		currentObject[var] = Vector:createFromFile(line)
+	elseif line:find("%s+%d+") then
+		_, _, currentObject[var] = line:find("%s+(%d+)")
 	else -- string
 		_, _, currentObject[var] = line:find("%s+\"(.*)\"")
 	end
@@ -30,7 +32,7 @@ end
 
 -- Vector Class
 
-Vector = {x = 0, y = 0, z = 0}
+Vector = {x = 0.0, y = 0.0, z = 0.0}
 
 function Vector:__tostring()
 	return self.x .. " " .. self.y .. " " .. self.z
@@ -49,15 +51,16 @@ Vector.new = templateNewMethod
 
 -- Loadable Object Class
 
-LoadableObject = {name = "", class = ""}
+LoadableObject = {name = "", class = "", texture = 0}
 LoadableObject.new = templateNewMethod
 
 function LoadableObject.baseString(obj)
-	return obj.name .. " : " .. obj.class
+	return obj.name .. " : " .. obj.class ..
+	"\n\ttexture " .. tostring(obj.texture)
 end
 
 -- A Solid Class 
-Solid = LoadableObject:new{position = Vector:new(), size = Vector:new(), class = "Solid"}
+Solid = LoadableObject:new{position = Vector:new(), size = Vector:new(), class = "Solid", texture}
 
 function Solid:__tostring()
 	return self:baseString() ..
@@ -66,8 +69,8 @@ function Solid:__tostring()
 	"\nend"
 end	
 
--- ScriptCollider class, a coded collider, will run a script on collision, that's pretty much it
-ScriptCollider = LoadableObject:new{position = Vector:new(), size = Vector:new(), class = "ScriptCollider", id = "0"}
+-- ScriptCollider class, a scripted object
+ScriptCollider = LoadableObject:new{position = Vector:new(), size = Vector:new(), class = "ScriptCollider", id = "0", texture}
 
 function ScriptCollider:__tostring()
 	return self:baseString() .. 
@@ -120,9 +123,11 @@ end
 
 function loadObjects()
 	for k, v in pairs(allObjects) do
-		DrawBlock(v.position, v.size)
 		if getmetatable(v) == ScriptCollider then
-			AddCollider(v)
+			id = DrawBlock(v.position, v.size, false, v.texture)
+			AddCollider(v, id)
+		else
+			DrawBlock(v.position, v.size, true, v.texture)
 		end
 	end
 end

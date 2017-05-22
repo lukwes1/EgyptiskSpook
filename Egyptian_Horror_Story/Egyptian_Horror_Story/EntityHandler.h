@@ -40,6 +40,7 @@ private:
 	void updateCollision();
 	void detectCloseTreasures();
 
+	float getPlayerGroundY(DirectX::SimpleMath::Vector3 const &pos) const;
 public:
 	EntityHandler();
 	virtual ~EntityHandler();
@@ -54,11 +55,13 @@ public:
 
 	void update(ID3D11DeviceContext* context, float dt);
 
-	void addBlock(DirectX::SimpleMath::Vector3 position, DirectX::SimpleMath::Vector3 size);
+	int addBlock(DirectX::SimpleMath::Vector3 position, DirectX::SimpleMath::Vector3 size,
+		AABB *aabb, bool solid, int textureId);
 
 	EntityRenderer* getEntityRenderer();
 	Player* getPlayer();
 	Enemy* getEnemy();
+	Entity* getEntity(int index) const;
 };
 
 

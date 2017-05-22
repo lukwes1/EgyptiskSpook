@@ -1,11 +1,13 @@
 platform : Solid
+	texture 1
 	position 50 2 50
-	size 25 2 25
+	size 25 5 25
 end
 
 NormalCoin : ScriptCollider
-	id "0"
+	texture 0
+	id "3"
 	position 65 2 65
-	size 5 5 5
+	size 5 5 1
 end
 

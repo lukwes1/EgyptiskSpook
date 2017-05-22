@@ -6,11 +6,13 @@
 #include "SimpleMath.h"
 #include <vector>
 #include "lua.hpp"
+#include "EntityHandler.h"
 
 class LuaHandler
 {
 public:
 	struct Collider {
+		int gId;
 		char const *id;
 		DirectX::SimpleMath::Vector3 position, size;
 		char const *name;
@@ -18,14 +20,19 @@ public:
 	};
 
 	lua_State *state;
+	EntityHandler *entities;
+	Player *player;
 private:
 	std::vector<Collider> colliders;
 public:
 	LuaHandler();
 	~LuaHandler();
 
+	void setEntityHandler(EntityHandler *entities);
+	void setPlayer(Player *player);
+
 	void addCollider(Collider const &collider);
-	void update(Player *player);
+	void update();
 	void loadLua(char const *filePath);
 	
 	void addLuaFunctions(lua_State *state) const;

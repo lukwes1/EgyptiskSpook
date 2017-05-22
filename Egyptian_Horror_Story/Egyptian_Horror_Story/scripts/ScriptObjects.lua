@@ -7,7 +7,7 @@ objects = {} -- all objects
 -- CLASSES --
 
 print = Log
-ScriptObject = { update = nil, onPlayerCollision = nil }
+ScriptObject = { key = -1, update = nil, onPlayerCollision = nil }
 
 function ScriptObject:new(o)
 	o = o or {}
@@ -16,24 +16,43 @@ function ScriptObject:new(o)
 	return o
 end
 
-coin = ScriptObject:new({pointsGiven = 0})
+Coin = ScriptObject:new({pointsGiven = 0, taken = false})
 
-function coin.update()
-	print ("hello")
+function Coin:update()
 end
 
-function coin.onPlayerCollision() 
-	print("Coin Wow!")
-	score = score + pointsGiven
+function Coin:onPlayerCollision() 
+	if not self.taken then
+		score = score + self.pointsGiven
+		print("Score: " .. score)
+		hide(self.key)
+		
+		self.taken = true
+	end
 end
 
-normalCoin = coin:new({pointsGiven = 1})
+NormalCoin = Coin:new{pointsGiven = 1}
+Trampoline = ScriptObject:new{frameCD = 100, currCD = 0}
+
+function Trampoline:update() 
+	if (self.currCD > 0) then self.currCD = self.currCD - 1 end
+end
+
+function Trampoline:onPlayerCollision()
+	if IsInAir then
+		SetSpeed(50)
+	end
+end
 
 -- END OF CLASSES --
 
 -- this is a weird solution 🤢
-function addNormalCoin(id)
-	objects[id] = normalCoin:new()
+function addNormalCoin(id, inKey)
+	objects[id] = NormalCoin:new{key = inKey}
+end 
+
+function addTrampoline(id, inKey)
+	objects[id] = Trampoline:new{key = inKey}
 end 
 
 function onPlayerCollision(id)
@@ -42,6 +61,6 @@ end
 
 function update()
 	for k, v in pairs(objects) do
-		v.update()
+		v:update()
 	end
 end
