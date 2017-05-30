@@ -42,8 +42,8 @@ int LuaFunctions::drawBlock(lua_State *state) {
 	float pos[3] = { 0,0,0 }, size[3] = { 0,0,0 };
 
 	if (lua_istable(state, -3) && lua_istable(state, -4)
-		&& lua_isboolean(state, -2) && lua_isinteger(state, -1)) {
-		int texId = lua_tointeger(state, -1);
+		&& lua_isboolean(state, -2) && lua_isnumber(state, -1)) { // lua_isinteger doesnt work`? :/
+		int texId = lua_tointeger(state, -1); //to does tho :)
 		lua_pop(state, 1);
 		bool solid = lua_toboolean(state, -1);
 		lua_pop(state, 1);
@@ -53,7 +53,7 @@ int LuaFunctions::drawBlock(lua_State *state) {
 		Vector3 size(size[0], size[1], size[2]);
 
 		int gId = entityHandler->addBlock(pos, size,
-			new AABB(pos + (size * 0.5f), size), solid, texId);
+			new AABB(pos, size), solid, texId);
 		lua_pop(state, 2); //pop the two tables
 		lua_pushnumber(state, gId);
 

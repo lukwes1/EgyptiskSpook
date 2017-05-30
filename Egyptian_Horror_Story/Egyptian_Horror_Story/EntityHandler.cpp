@@ -1,4 +1,5 @@
 #include "EntityHandler.h"
+#define EPSILON 0.00001f
 #define ENEMY_KEY 400
 #define BASE_TRAP_KEY 1000
 using namespace DirectX::SimpleMath;
@@ -1295,7 +1296,7 @@ void EntityHandler::hardcodedMap(ID3D11Device* device)
 
 int EntityHandler::addBlock(Vector3 position, Vector3 size, AABB *aabb, bool solid, int texId) {
 	std::vector<EntityStruct::VertexStruct> temp;
-	mLoader.loadMesh(temp, std::string("testCube.fbx"));
+	mLoader.loadMesh(temp, std::string("cube.fbx"));
 
 	Entity *block = new Entity(mNrOfKeys++, aabb, solid);
 	block->setPosition(position);
@@ -1553,27 +1554,23 @@ float EntityHandler::getPlayerGroundY(Vector3 const &position) const {
 	AABB *aabb;
 	Vector3 p, s;
 
-	float temp = 0, gy;
+	float groundY = 0, temp;
 
 	for (auto& entity : mEntities) {
 		if (entity->isSolid()) {
 			aabb = entity->getAABB();
 			p = aabb->mPoint;
 			s = aabb->mScale;
-			SDL_Log("PY: %f, OY: %f", o.y, p.y);
-			if (o.x >= p.x - s.x && o.x <= p.x + s.x) {
-				if (o.z >= p.z - s.z && o.z <= p.z + s.z) {
-					gy = p.y + s.y;
-					if (gy < o.y + 0.5f && gy > temp) {
-						SDL_Log("new gr! %f ", gy);
-						temp = gy;
-					}
+			if (abs(o.x - p.x) <= s.x && abs(o.z - p.z) <= s.z) {
+				temp = p.y + s.y + 2.0f;
+				if (temp <= o.y + EPSILON && temp > groundY) {
+					groundY = temp;
 				}
 			}
 		}
 	}
 
-	return temp;
+	return groundY;
 }
 
 EntityRenderer* EntityHandler::getEntityRenderer()

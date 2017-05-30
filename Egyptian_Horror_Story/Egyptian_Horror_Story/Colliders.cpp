@@ -473,7 +473,7 @@ AABB::AABB(DirectX::SimpleMath::Vector3 point, DirectX::SimpleMath::Vector3 x, D
 AABB::AABB(DirectX::SimpleMath::Vector3 point, DirectX::SimpleMath::Vector3 size)
 {
 	DirectX::SimpleMath::Vector3 halfSize = size * 0.5f;
-	this->mPoint = point + (size * 0.5f);
+	this->mPoint = point;
 	this->mScale = DirectX::SimpleMath::Vector3(abs(halfSize.x), abs(halfSize.y), abs(halfSize.z));
 }
 
