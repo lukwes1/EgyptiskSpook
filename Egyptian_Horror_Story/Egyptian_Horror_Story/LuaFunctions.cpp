@@ -111,9 +111,10 @@ int LuaFunctions::addCollider(lua_State *state) {
 		lua_pushstring(state, "id");
 		lua_gettable(state, -2);
 
-		if (lua_isstring(state, -1)) {
+		if (lua_isstring(state, -1))
 			id = lua_tostring(state, -1);
-		}
+		else if (lua_isnumber(state, -1)) // A Bad solution for a bad problem
+			id = std::to_string(static_cast<int> (lua_tonumber(state, -1))).c_str();
 		lua_pop(state, 1);
 
 		LuaHandler::Collider collider;

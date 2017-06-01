@@ -4,6 +4,8 @@
 #include "lua.hpp"
 #include "EntityHandler.h"
 #include "LuaHandler.h"
+#include <SDL.h>
+#include <SimpleMath.h>
 
 class LuaMapLoader
 {
@@ -12,6 +14,9 @@ private:
 	EntityHandler *entities;
 	LuaHandler *luaHandler;
 	bool mapLoaderLoaded;
+
+	void buildObject(DirectX::SimpleMath::Vector3 const &norm,
+					 DirectX::SimpleMath::Vector3 const &pos);
 public:
 	LuaMapLoader();
 	~LuaMapLoader();
@@ -19,6 +24,9 @@ public:
 	void setupMapLoader(EntityHandler *entities, LuaHandler *luaHandler);
 	void loadFunctions();
 	void loadMap(char const *path);
+	void handleMouseEvents(SDL_Scancode const &code,
+						   DirectX::SimpleMath::Vector3 const &norm,
+						   DirectX::SimpleMath::Vector3 const &pos);
 
 	bool isMapLoaderLoaded();
 };

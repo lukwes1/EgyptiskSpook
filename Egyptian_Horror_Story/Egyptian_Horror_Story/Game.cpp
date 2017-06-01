@@ -102,6 +102,12 @@ bool Game::handleKeyboardPress(SDL_KeyboardEvent const& key)
 		break;
 	}
 
+	this->mapLoader.handleMouseEvents(
+		key.keysym.scancode,
+		this->mCamera->getForward(),
+		this->mEntityHandler->getPlayer()->getPosition()
+	);
+
 	return true;
 }
 

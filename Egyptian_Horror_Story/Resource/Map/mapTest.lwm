@@ -6,7 +6,7 @@ end
 
 NormalCoin : ScriptCollider
 	texture 0
-	id "3"
+	id "0"
 	position 65 2 65
 	size 5 5 1
 end

@@ -38,6 +38,18 @@ function Vector:__tostring()
 	return self.x .. " " .. self.y .. " " .. self.z
 end	
 
+function Vector:__add(vec)
+	if getmetatable(vec) == self then
+		return self:new{x = self.x + vec.x, y = self.y + vec.y, z = self.z + vec.z}
+	else
+		return self:new() -- Just returns default
+	end
+end
+
+function Vector:__mul(val)
+	return self:new{x = self.x * val, y = self.y * val, self.z * val}
+end
+
 function Vector.filePattern()
 	return "%s+(%d+)%s+(%d+)%s+(%d+)"
 end	
@@ -130,4 +142,49 @@ function loadObjects()
 			DrawBlock(v.position, v.size, true, v.texture)
 		end
 	end
+end
+
+-- Map Builder
+range = 2
+objectType = 1
+
+objectAddFunctions = {
+	function(norm, pos) -- Add Solid
+		obj = Solid:new{position = norm * range + pos, size = Vector:new{x = 25, y = 2, z = 25}, texture = 0}
+		table.insert(allObjects, obj)
+	
+		DrawBlock(obj.position, obj.size, true, obj.texture)
+	end, 
+	function(norm, pos) -- Add Normal Coint
+		obj = ScriptCollider:new{position = norm * range + pos, size = Vector:new{x = 5, y = 5, z = 1},
+								 texture = 1, id = #allObjects, name = "NormalCoin"}
+		Log("Id: " .. id)
+		table.insert(allObjects, obj)
+		
+		id = DrawBlock(obj.position, obj.size, false, obj.texture)
+		AddCollider(obj, id)
+	end
+}
+
+function increaseRange()
+	Log("Range: " .. range)
+	range = range + 0.05
+end
+
+function decreaseRange()
+	Log("Range: " .. range)
+	range = range - 0.05
+end
+
+function switchObjectType()
+	Log("Type: " .. objectType)
+	objectType = objectType + 1
+	if (objectType > #objectAddFunctions) then
+		objectType = 1
+	end
+end
+
+function placeObject(inX, inY, inZ, pX, pY, pZ)
+	objectAddFunctions[objectType](Vector:new{x = inX, y = inY, z = inZ},
+								   Vector:new{x = pX, y = pY, z = pZ})
 end

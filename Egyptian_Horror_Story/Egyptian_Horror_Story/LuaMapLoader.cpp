@@ -63,3 +63,40 @@ void LuaMapLoader::loadMap(char const *path) {
 bool LuaMapLoader::isMapLoaderLoaded() {
 	return mapLoaderLoaded;
 }
+
+void LuaMapLoader::handleMouseEvents(SDL_Scancode const &code,
+									 DirectX::SimpleMath::Vector3 const &norm,
+									 DirectX::SimpleMath::Vector3 const &pos) {
+	switch (code) {
+		case SDL_SCANCODE_Q: //--
+			lua_getglobal(state, "decreaseRange");
+			LuaFunctions::handleError(state, lua_pcall(state, 0, 0, 0));
+			break;
+		case SDL_SCANCODE_E: //++
+			lua_getglobal(state, "increaseRange");
+			LuaFunctions::handleError(state, lua_pcall(state, 0, 0, 0));
+			break;
+		case SDL_SCANCODE_B: // Build
+			buildObject(norm, pos);
+			break;
+		case SDL_SCANCODE_G: // Switch Obj
+			lua_getglobal(state, "switchObjectType");
+			LuaFunctions::handleError(state, lua_pcall(state, 0, 0, 0));
+			break;
+	}
+}
+
+void LuaMapLoader::buildObject(DirectX::SimpleMath::Vector3 const &norm,
+							   DirectX::SimpleMath::Vector3 const &pos) {
+	lua_getglobal(state, "placeObject");
+
+	lua_pushnumber(state, norm.x);
+	lua_pushnumber(state, norm.y);
+	lua_pushnumber(state, norm.z);
+
+	lua_pushnumber(state, pos.x);
+	lua_pushnumber(state, pos.y);
+	lua_pushnumber(state, pos.z);
+
+	LuaFunctions::handleError(state, lua_pcall(state, 6, 0, 0));
+}
