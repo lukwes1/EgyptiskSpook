@@ -63,7 +63,7 @@ Player::~Player()
 	delete this->col;
 }
 
-void Player::updatePosition(float dt, float groundY)
+void Player::updatePosition(float dt, float groundY, bool noclip)
 {
 	if (mSpeed > SPEED) {
 		mSpeed -= SPEED_DROPOFF * dt;
@@ -74,8 +74,8 @@ void Player::updatePosition(float dt, float groundY)
 	if (!this->mIsPickingTres)
 	{
 		this->mPrevPos = this->getPosition();
-		computeVelocity();
-		handleJumping(dt, groundY);
+		computeVelocity(noclip);
+		if (!noclip) handleJumping(dt, groundY);
 		handleSprinting(dt);
 
 		DirectX::SimpleMath::Vector3 newPos = this->getPosition() + this->mVelocity * mSpeed * getMovementMultiplier() * dt;
@@ -277,7 +277,7 @@ void Player::updateLightPosition() {
 	this->mLight->update(this->mCamera->getPos(), offset, this->mCamera->getForward());
 }
 
-void Player::computeVelocity() {
+void Player::computeVelocity(bool noclip) {
 	Vector3 normal = Vector3(0, 1, 0); //Normal of plane, shouldn't change
 	Vector3 forward = this->mCamera->getForward();
 
@@ -285,7 +285,7 @@ void Player::computeVelocity() {
 	proj.Normalize();
 
 	this->mVelocity = this->mDirection.x * this->mCamera->getRight();
-	this->mVelocity += this->mDirection.y * proj;
+	this->mVelocity += this->mDirection.y * (noclip ? forward : proj);
 }
 
 void Player::handleSprinting(float dt) {
@@ -378,4 +378,8 @@ bool Player::isJumping() const {
 
 bool Player::isRunning() const {
 	return mSprinting;
+}
+
+void Player::resetGravity() {
+	mJumpingVelocity = 0;
 }

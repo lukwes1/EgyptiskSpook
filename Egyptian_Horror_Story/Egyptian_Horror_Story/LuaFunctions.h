@@ -33,6 +33,7 @@ public:
 	static int isSprinting(lua_State *state);
 	static int getPlayerDir(lua_State *state);
 
+	static int victory(lua_State *state);
 	// Wubbalubbadubdub
 	static void loadSizeAndPosition(lua_State *state, float pos[3], float size[3]);
 };

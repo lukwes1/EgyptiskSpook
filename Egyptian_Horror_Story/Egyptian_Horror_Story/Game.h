@@ -13,7 +13,6 @@
 class Game
 {
 private:
-
 	class StateHandler {
 	private:
 		GAMESTATE state;
@@ -52,7 +51,9 @@ public:
 	// returns true/false if cursor should be locked / unlocked. not good code but works
 	bool handleMousePress(SDL_MouseButtonEvent const &button);
 	void updateLua();
+
 	void setWindowSize(SDL_Window* window);
+	void victory();
 };
 
 

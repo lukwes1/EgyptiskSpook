@@ -12,7 +12,7 @@ class LuaHandler
 {
 public:
 	struct Collider {
-		int gId;
+		int gId = -1;
 		std::string id;
 		DirectX::SimpleMath::Vector3 position, size;
 		char const *name;
@@ -30,6 +30,7 @@ public:
 
 	void setEntityHandler(EntityHandler *entities);
 	void setPlayer(Player *player);
+	void reset();
 
 	void addCollider(Collider const &collider);
 	void update();

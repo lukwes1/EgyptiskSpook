@@ -32,6 +32,8 @@ public:
 	void loadMap(char const *path);
 	void saveMap(char const *path);
 
+	void loadLuaFile();
+
 	void handleMouseEvents(SDL_Scancode const &code,
 						   DirectX::SimpleMath::Vector3 const &norm,
 						   DirectX::SimpleMath::Vector3 const &pos);

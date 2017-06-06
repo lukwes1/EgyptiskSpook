@@ -34,10 +34,7 @@ void Game::setupEntityHandler()
 
 	luaHandler.setEntityHandler(mEntityHandler);
 	luaHandler.setPlayer(mEntityHandler->getPlayer());
-
-	luaHandler.loadLua("scripts/ScriptObjects.lua");
 	mapLoader.setupMapLoader(mEntityHandler, &luaHandler);
-	mapLoader.loadMap(DEFAULT_MAP_PATH);
 }
 
 Game::Game(GraphicsHandler* mGraphicsHandler, OptionsHandler* options) {
@@ -69,11 +66,17 @@ Game::~Game()
 
 void Game::updateGame(float dt)
 {
-	this->mEntityHandler->update(this->mGraphics->getDeviceContext(), dt);
+	this->mEntityHandler->update(this->mGraphics->getDeviceContext(), dt, mStateHandler->getState());
 	this->mCamera->update(this->mGraphics->getDeviceContext());
 
 	this->mCamera->updateRotation(this->mGraphics->getDeviceContext());
 	this->luaHandler.update();
+
+	if (this->mEntityHandler->hasVictory())
+		mStateHandler->setState(GAMESTATE::VICTORY);
+
+	if (this->mEntityHandler->getPlayer()->getPosition().y < -250.f)
+		mStateHandler->setState(GAMESTATE::MAIN_MENU);
 }
 
 void Game::draw() {
@@ -116,13 +119,17 @@ bool Game::handleKeyboardPress(SDL_KeyboardEvent const& key)
 				mapLoader.saveMap(DEFAULT_MAP_PATH);
 			break;
 		}
+	case SDL_SCANCODE_1:
+		updateLua();
+		break;
 	}
 
-	this->mapLoader.handleMouseEvents(
-		key.keysym.scancode,
-		this->mCamera->getForward(),
-		this->mEntityHandler->getPlayer()->getPosition()
-	);
+	if (mStateHandler->getState() == GAMESTATE::BUILDING)
+		this->mapLoader.handleMouseEvents(
+			key.keysym.scancode,
+			this->mCamera->getForward(),
+			this->mEntityHandler->getPlayer()->getPosition()
+		);
 
 	return true;
 }
@@ -146,14 +153,21 @@ bool Game::handleMousePress(SDL_MouseButtonEvent const &button) {
 		this->mMenuHandler.mousePress(button, this->mStateHandler->getState())
 	);
 
-	if (this->mStateHandler->getState() == PLAY)
+	if (this->mStateHandler->getState() == PLAY) {
+		updateLua();
+		mEntityHandler->getPlayer()->setPosition(
+			DirectX::SimpleMath::Vector3::Zero);
+		mEntityHandler->getPlayer()->resetGravity();
 		return true;
-	else
+	} else
 		return false;
 }
 
 void Game::updateLua() {
-	this->mAIHandler->setupAI();
+	luaHandler.reset();
+	luaHandler.loadLua("scripts/ScriptObjects.lua");
+	mapLoader.loadLuaFile();
+	mapLoader.loadMap(DEFAULT_MAP_PATH);
 }
 
 GAMESTATE Game::StateHandler::getState() {
@@ -188,4 +202,8 @@ void Game::setWindowSize(SDL_Window* window) {
 	int height = this->mOptionHandler->getGraphicSettings().height;
 	SDL_SetWindowSize(window, width, height);
 	this->mMenuHandler.setWindowResolution(width, height);
+}
+
+void Game::victory() {
+	mStateHandler->setState(GAMESTATE::VICTORY);
 }

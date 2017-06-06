@@ -6,7 +6,6 @@ LuaHandler::LuaHandler()
 	state = nullptr;
 }
 
-
 LuaHandler::~LuaHandler()
 {
 	if (state) {
@@ -44,6 +43,23 @@ void LuaHandler::addCollider(Collider const &collider) {
 	}
 
 	lua_pop(state, 1);
+}
+
+void LuaHandler::reset() {
+	if (state) {
+		assert(lua_gettop(state) == 0);
+
+		lua_close(state);
+		state = nullptr;
+	}
+
+	for (auto& collider : colliders) {
+		if (collider.gId != -1)
+			entities->removeEntity(collider.gId);
+		if (collider.aabb);
+			delete collider.aabb;
+	}
+	colliders.clear();
 }
 
 void LuaHandler::setEntityHandler(EntityHandler *entities) {
@@ -86,6 +102,7 @@ void LuaHandler::addLuaFunctions(lua_State *state) const {
 	LuaFunctions::addFunctionClosure(state, LuaFunctions::hide, "hide", data, ARRAYSIZE(data));
 	LuaFunctions::addFunctionClosure(state, LuaFunctions::setPosition, "SetPosition", data, ARRAYSIZE(data));
 	LuaFunctions::addFunctionClosure(state, LuaFunctions::getPosition, "GetPosition", data, ARRAYSIZE(data));
+	LuaFunctions::addFunctionClosure(state, LuaFunctions::victory, "victory", data, ARRAYSIZE(data));
 
 	data[0] = player;
 	LuaFunctions::addFunctionClosure(state, LuaFunctions::setPlayerPos, "SetPlayerPos", data, ARRAYSIZE(data));

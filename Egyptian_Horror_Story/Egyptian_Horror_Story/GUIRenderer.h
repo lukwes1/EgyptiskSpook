@@ -29,6 +29,7 @@ public:
 	void loadButtons(MenuHandler &menuHandler);
 
 	void renderStartMenu(ID3D11DeviceContext *context, ShaderHandler &shaders);
+	void renderVictory(ID3D11DeviceContext *context, ShaderHandler &shaders);
 	void renderHud(ID3D11DeviceContext *context, ShaderHandler &shaders);
 
 	void setNavigationTest(ID3D11Device *device, void* pixels, int w, int h); //for testing

@@ -9,6 +9,7 @@ enum GAMESTATE {
 	MAIN_MENU,
 	PLAY,
 	BUILDING,
+	VICTORY,
 	UNDEFINED //Renderer can be used for multiple purposes
 };
 

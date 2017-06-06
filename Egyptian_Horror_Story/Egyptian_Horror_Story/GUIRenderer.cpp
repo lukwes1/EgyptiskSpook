@@ -33,11 +33,17 @@ void GUIRenderer::setup(ID3D11Device *device, ShaderHandler &shaders) {
 	this->mElements.push_back(GUI_ELEMENT{ Vector3(-0.2f, 0.2f, 0), dimension });
 	this->mElements.push_back(GUI_ELEMENT{ Vector3(-0.2f, -0.2f, 0), dimension });
 	this->mElements.push_back(GUI_ELEMENT{ Vector3(-0.4f, 0.6f, 0), Vector2(0.8f, 0.3f) });
+	this->mElements.push_back(GUI_ELEMENT{ Vector3(-0.9f, -0.1f, 0), Vector2(0.6f, 0.6f) });
+	this->mElements.push_back(GUI_ELEMENT{ Vector3(0.30f, -0.1f, 0), Vector2(0.6f, 0.6f) });
+	this->mElements.push_back(GUI_ELEMENT{ Vector3(-0.4f, 0.1f, 0), Vector2(0.8f, 0.4f) });
 
 	// Add the texture here, texture ID = index of element in mElements, this class got own graphicsdata, so infinite ids is availabe (not inf)
 	mGraphicsData->loadTexture(0, L"play.png", device);
 	mGraphicsData->loadTexture(1, L"options.png", device);
 	mGraphicsData->loadTexture(2, L"splash.png", device);
+	mGraphicsData->loadTexture(3, L"helpimage.png", device);
+	mGraphicsData->loadTexture(4, L"goalimage.png", device);
+	mGraphicsData->loadTexture(5, L"victory.png", device);
 
 	D3D11_SUBRESOURCE_DATA data;
 	data.pSysMem = &this->mElements[0];
@@ -59,6 +65,8 @@ void GUIRenderer::render(ID3D11DeviceContext *context, ShaderHandler &shaders, G
 		renderHud(context, shaders);
 	else if (state == GAMESTATE::MAIN_MENU)
 		renderStartMenu(context, shaders);
+	else if (state == GAMESTATE::VICTORY)
+		renderVictory(context, shaders);
 }
 
 void GUIRenderer::renderStartMenu(ID3D11DeviceContext *context, ShaderHandler &shaders) {
@@ -95,12 +103,27 @@ void GUIRenderer::renderStartMenu(ID3D11DeviceContext *context, ShaderHandler &s
 	context->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
 
 	// Loop through and draw buttons, optimize plz
-	for (size_t i = 0; i < mElements.size(); i++) {
+	for (size_t i = 0; i < mElements.size() - 1; i++) {
 		srv = this->mGraphicsData->getSRV(static_cast<int> (i));
 		context->PSSetShaderResources(0, 1, &srv);
 		context->Draw(1, static_cast<int> (i));
 	}
 }
+
+void GUIRenderer::renderVictory(ID3D11DeviceContext *context, ShaderHandler &shaders) {
+	UINT stride = sizeof(GUI_ELEMENT), offset = 0;
+	ID3D11Buffer *buffer = this->mGraphicsData->getVertexBuffer(0);
+	ID3D11ShaderResourceView *srv;
+
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	context->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
+
+	// Loop through and draw buttons, optimize plz
+	srv = this->mGraphicsData->getSRV(5);
+	context->PSSetShaderResources(0, 1, &srv);
+	context->Draw(1, 5);
+}
+
 
 void GUIRenderer::renderHud(ID3D11DeviceContext *context, ShaderHandler &shaders) {
 	UINT stride = sizeof(Vector3), offset = 0;

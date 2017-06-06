@@ -170,30 +170,47 @@ initObject = {
 	end,
 	function(norm, pos) -- Add Normal Coin
 		return ScriptCollider:new{position =  pos + norm * range,
-								 size = Vector:new{x = 5, y = 5, z = 0.2},
+								 size = Vector:new{x = 5, y = 5, z = 0.5},
 								 texture = 1,
 								 id = #allObjects,
 								 name = "NormalCoin"}
 	end,
 	function(norm, pos) -- Add Normal Coin
 		return ScriptCollider:new{position =  pos + norm * range,
-								 size = Vector:new{x = 0.2, y = 5, z = 5},
+								 size = Vector:new{x = 0.5, y = 5, z = 5},
 								 texture = 1,
 								 id = #allObjects,
 								 name = "NormalCoin"}
+	end,
+	function(norm, pos) -- Add Trampoline
+		return ScriptCollider:new{position =  pos + norm * range,
+								 size = Vector:new{x = 3, y = 3, z = 3},
+								 texture = 2,
+								 id = #allObjects,
+								 name = "Trampoline"}
+	end,					
+	function(norm, pos) -- Add Super Coin
+		return ScriptCollider:new{position =  pos + norm * range,
+								 size = Vector:new{x = 0.7, y = 7, z = 7},
+								 texture = 1,
+								 id = #allObjects,
+								 name = "SuperCoin"}
 	end
 }
 
 buildObject = {}
 
-buildObject["platform"] = function(obj) -- Add platform
+buildObject["platform"] = function(obj) -- Build platform
 		DrawBlock(obj.position, obj.size, true, obj.texture)
 end
 
-buildObject["NormalCoin"] = function(obj) -- Add Normal Coint
+buildObject["NormalCoin"] = function(obj) -- Build Normal Coint
 	local id = DrawBlock(obj.position, obj.size, false, obj.texture)
 	AddCollider(obj, id)
 end
+
+buildObject["Trampoline"] = buildObject["NormalCoin"]
+buildObject["SuperCoin"] = buildObject["NormalCoin"]
 
 function increaseRange()
 	range = range + 0.25

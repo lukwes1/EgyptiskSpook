@@ -36,7 +36,7 @@ private:
 	bool damaged;
 
 	void updateLightPosition();
-	void computeVelocity();
+	void computeVelocity(bool noclip = false);
 	void handleSprinting(float dt);
 	float handleSneaking(float dt);
 	void startSprint();
@@ -51,7 +51,7 @@ public:
 	Player(CameraClass* camera, ID3D11Device* device, ID3D11DeviceContext* context, int grapchicsKey, GraphicsData* gData);
 	virtual ~Player();
 
-	void updatePosition(float dt, float groundY);
+	void updatePosition(float dt, float groundY, bool noclip = false);
 	void handleJumping(float dt, float groundY);
 
 	bool handleKeyboardPress(SDL_KeyboardEvent const &key);
@@ -59,6 +59,7 @@ public:
 	void handleMouseMotion(SDL_MouseMotionEvent const &motion);
 
 	void setPickuppableTreasure(Treasure* tres);
+	void resetGravity();
 	
 	Light* getLight();
 	CameraClass* getCamera();

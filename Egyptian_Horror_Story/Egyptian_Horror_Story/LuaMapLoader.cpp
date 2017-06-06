@@ -40,17 +40,7 @@ void LuaMapLoader::buildingModeUpdate(
 void LuaMapLoader::setupMapLoader(EntityHandler *entities, LuaHandler *luaHandler) {
 	this->entities = entities;
 	this->luaHandler = luaHandler;
-
-	state = luaL_newstate();
-	luaL_openlibs(state);
-
-	loadFunctions();
-
-	int error = luaL_loadfile(state, PATH "mapLoader" L) ||
-		lua_pcall(state, 0, 0, 0); //Load the file
-
-	if (LuaFunctions::handleError(state, error))
-		mapLoaderLoaded = true;
+	loadLuaFile(); // Loads the lua file
 }
 
 void LuaMapLoader::loadFunctions() {
@@ -88,6 +78,22 @@ void LuaMapLoader::saveMap(char const *path) {
 
 		}
 	}
+}
+
+void LuaMapLoader::loadLuaFile() {
+	if (state)
+		lua_close(state);
+
+	state = luaL_newstate();
+	luaL_openlibs(state);
+
+	loadFunctions();
+
+	int error = luaL_loadfile(state, PATH "mapLoader" L) ||
+		lua_pcall(state, 0, 0, 0); //Load the file
+
+	if (LuaFunctions::handleError(state, error))
+		mapLoaderLoaded = true;
 }
 
 bool LuaMapLoader::isMapLoaderLoaded() {

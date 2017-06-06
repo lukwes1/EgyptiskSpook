@@ -20,7 +20,7 @@ int EntityHandler::addBlock(Vector3 position, Vector3 size, AABB *aabb, bool sol
 	block->setPosition(position);
 	block->setScale(size);
 
-	wchar_t *textures[] = { L"coin.png", L"block.png" };
+	wchar_t *textures[] = { L"block.png", L"coin.png", L"boost.png" };
 	if (texId > ARRAYSIZE(textures)) texId = 0;
 
 	mEntityRenderer->loadObject(device, block->getKey(), temp.data(), temp.size(),
@@ -30,6 +30,10 @@ int EntityHandler::addBlock(Vector3 position, Vector3 size, AABB *aabb, bool sol
 	this->mEntities.push_back(block);
 
 	return mEntities.size() - 1;
+}
+
+void EntityHandler::removeEntity(int key) {
+	this->mEntities[key]->setScale(Vector3(0, 0, 0));
 }
 
 int EntityHandler::updateBuildBlock(DirectX::SimpleMath::Vector3 position,
@@ -207,6 +211,7 @@ EntityHandler::EntityHandler()
 	this->mEntityRenderer = new EntityRenderer(GAMESTATE::UNDEFINED);
 	this->footstepsPlaying = false;
 	this->toBuild = nullptr;
+	this->victory = false;
 }
 
 EntityHandler::~EntityHandler()
@@ -264,12 +269,12 @@ void EntityHandler::setupAudioManager(AudioManager* manager)
 	this->mAudioManager->playSfx(0);
 }
 
-void EntityHandler::update(ID3D11DeviceContext* context, float dt)
+void EntityHandler::update(ID3D11DeviceContext* context, float dt, GAMESTATE state)
 {
 	setDeviceContext(context);
 
 	DirectX::SimpleMath::Vector3 prevPos = this->mPlayer->getPosition();
-	this->mPlayer->updatePosition(dt, getPlayerGroundY(mPlayer->getPosition()));
+	this->mPlayer->updatePosition(dt, getPlayerGroundY(mPlayer->getPosition()), state == GAMESTATE::BUILDING);
 
 	for (auto& entity : mEntities)
 		entity->updateTransformBuffer(context, mEntityRenderer->getGraphicsData());
@@ -280,7 +285,7 @@ float EntityHandler::getPlayerGroundY(Vector3 const &position) const {
 	AABB *aabb;
 	Vector3 p, s;
 
-	float groundY = 0, temp;
+	float groundY = -300, temp;
 
 	for (auto& entity : mEntities) {
 		if (entity->isSolid()) {
@@ -324,4 +329,12 @@ void EntityHandler::setToBuildEntity(Entity *entity) {
 
 Entity *EntityHandler::getToBuildEntity() const {
 	return toBuild;
+}
+
+void EntityHandler::setVictory(bool b) {
+	this->victory = b;
+}
+
+bool EntityHandler::hasVictory() const {
+	return victory;
 }

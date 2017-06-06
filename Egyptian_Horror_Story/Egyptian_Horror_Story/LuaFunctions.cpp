@@ -194,6 +194,7 @@ int LuaFunctions::hide(lua_State *state) {
 	return 0;
 }
 
+
 int LuaFunctions::setPosition(lua_State *state) {
 	EntityHandler *entities = getuserdata(state, EntityHandler*, 1);
 
@@ -297,4 +298,10 @@ int LuaFunctions::isSprinting(lua_State *state) {
 	Player *player = getuserdata(state, Player*, 1);
 	lua_pushboolean(state, player->isRunning());
 	return 1;
+}
+
+int LuaFunctions::victory(lua_State *state) {
+	EntityHandler *entities = getuserdata(state, EntityHandler*, 1);
+	entities->setVictory(true);
+	return 0;
 }

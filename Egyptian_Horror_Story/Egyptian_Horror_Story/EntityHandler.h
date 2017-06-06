@@ -37,6 +37,7 @@ private:
 
 	/* LUA BUILDING */
 	Entity *toBuild;
+	bool victory; //this is stupid
 
 	void loadEntityModel(std::string modelName, wchar_t* textureName, Entity* entity, ID3D11Device* device);
 	void updateAudio();
@@ -58,13 +59,14 @@ public:
 	void setupEntities(ID3D11Device* device);
 	void setupAudioManager(AudioManager* manager);
 
-	void update(ID3D11DeviceContext* context, float dt);
+	void update(ID3D11DeviceContext* context, float dt, GAMESTATE state);
 
 	int addBlock(DirectX::SimpleMath::Vector3 position, DirectX::SimpleMath::Vector3 size,
 		AABB *aabb, bool solid, int textureId);
 	int updateBuildBlock(DirectX::SimpleMath::Vector3 position,
 		DirectX::SimpleMath::Vector3 size,
 		int textureId);
+	void removeEntity(int key);
 
 	EntityRenderer* getEntityRenderer();
 	Player* getPlayer();
@@ -73,6 +75,9 @@ public:
 
 	void setToBuildEntity(Entity *entity);
 	Entity *getToBuildEntity() const;
+
+	void setVictory(bool victory);
+	bool hasVictory() const;
 };
 
 

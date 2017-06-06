@@ -25,3 +25,140 @@ NormalCoin : ScriptCollider
 	size 1 5 5
 end
 
+Trampoline : ScriptCollider
+	texture 2
+	id "4"
+	position -12.579225063324 -2.079117000103 -9.9312173128128
+	size 3 3 3
+end
+
+platform : Solid
+	texture 0
+	position -41.162561312318 30.123996809125 14.894086539745
+	size 25 0.3 25
+end
+
+platform : Solid
+	texture 0
+	position -67.285412102938 70.952864572406 49.698555231094
+	size 25 0.3 25
+end
+
+Trampoline : ScriptCollider
+	texture 2
+	id "7"
+	position 0.0 32.077734599821 0.0
+	size 3 3 3
+end
+
+Trampoline : ScriptCollider
+	texture 2
+	id "8"
+	position -67.372225562607 72.645857071504 59.450887680054
+	size 3 3 3
+end
+
+NormalCoin : ScriptCollider
+	texture 1
+	id "9"
+	position -51.0462859869 39.639392256737 24.601047873497
+	size 5 5 0.5
+end
+
+NormalCoin : ScriptCollider
+	texture 1
+	id "10"
+	position -51.465080142021 0.0 24.753476023674
+	size 5 5 0.5
+end
+
+NormalCoin : ScriptCollider
+	texture 1
+	id "11"
+	position -50.555174040794 52.761921286583 25.598647475243
+	size 5 5 0.5
+end
+
+NormalCoin : ScriptCollider
+	texture 1
+	id "12"
+	position -53.057912349701 58.700818538666 27.079229474068
+	size 5 5 0.5
+end
+
+NormalCoin : ScriptCollider
+	texture 1
+	id "13"
+	position -56.197431206703 63.838826656342 29.10841691494
+	size 5 5 0.5
+end
+
+NormalCoin : ScriptCollider
+	texture 1
+	id "14"
+	position -59.226411163807 68.853347063065 31.952373385429
+	size 5 5 0.5
+end
+
+NormalCoin : ScriptCollider
+	texture 1
+	id "15"
+	position -62.332630336285 73.814946651459 35.325790882111
+	size 5 5 0.5
+end
+
+NormalCoin : ScriptCollider
+	texture 1
+	id "16"
+	position -14.185682654381 4.0645141899586 -9.2989375591278
+	size 5 5 0.5
+end
+
+NormalCoin : ScriptCollider
+	texture 1
+	id "17"
+	position 0.0 0.0 1.6529625654221
+	size 5 5 0.5
+end
+
+NormalCoin : ScriptCollider
+	texture 1
+	id "18"
+	position -25.650674462318 21.018101111054 -0.36405593156815
+	size 5 5 0.5
+end
+
+NormalCoin : ScriptCollider
+	texture 1
+	id "19"
+	position -23.291635677218 17.670963078737 -2.9524631351233
+	size 5 5 0.5
+end
+
+NormalCoin : ScriptCollider
+	texture 1
+	id "20"
+	position -20.693921551108 13.30274322629 -5.4433266371489
+	size 5 5 0.5
+end
+
+SuperCoin : ScriptCollider
+	texture 1
+	id "21"
+	position -16.619394719601 0.0 -36.703130453825
+	size 0.7 7 7
+end
+
+platform : Solid
+	texture 0
+	position -1.4654674194753 -24.143851310015 2.4493835344911
+	size 25 0.3 25
+end
+
+Trampoline : ScriptCollider
+	texture 2
+	id "23"
+	position -1.1590766087174 -22.430426090956 -3.450435757637
+	size 3 3 3
+end
+
