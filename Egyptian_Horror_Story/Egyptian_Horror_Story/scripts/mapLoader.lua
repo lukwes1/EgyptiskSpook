@@ -39,24 +39,37 @@ function Vector:__tostring()
 end	
 
 function Vector:__add(vec)
-	if getmetatable(vec) == self then
-		return self:new{x = self.x + vec.x, y = self.y + vec.y, z = self.z + vec.z}
+	if getmetatable(vec) == Vector and getmetatable(self) == Vector then
+		return Vector:new{x = self.x + vec.x, y = self.y + vec.y, z = self.z + vec.z}
 	else
-		return self:new() -- Just returns default
+		return Vector:new() -- Just returns default
 	end
 end
 
 function Vector:__mul(val)
-	return self:new{x = self.x * val, y = self.y * val, self.z * val}
+	if getmetatable(self) == Vector and type(val) == "number" then
+		return Vector:new{x = self.x * val, y = self.y * val, z = self.z * val}
+	elseif type(self) == "number" then -- Self is the number and val is the vector so switch
+		return val * self
+	end
 end
 
 function Vector.filePattern()
-	return "%s+(%d+)%s+(%d+)%s+(%d+)"
+	return "%s+(%d+%p?%d?)%s+(%d+%p?%d?)%s+(%d+%p?%d?)"
 end	
 
 function Vector:createFromFile(line)
-	_, _, inX, inY, inZ = line:find(self.filePattern())
-	return self:new{x = inX, y = inY, z = inZ}
+	local numbers = {}
+	local i = 1
+	
+	for l in line:gmatch("%S+") do
+		numbers[i] = l
+		i = i + 1
+	end
+	
+	return Vector:new{x = tonumber(numbers[2]),
+					  y = tonumber(numbers[3]),
+					  z = tonumber(numbers[4])}
 end
 
 Vector.new = templateNewMethod
@@ -66,9 +79,9 @@ Vector.new = templateNewMethod
 LoadableObject = {name = "", class = "", texture = 0}
 LoadableObject.new = templateNewMethod
 
-function LoadableObject.baseString(obj)
-	return obj.name .. " : " .. obj.class ..
-	"\n\ttexture " .. tostring(obj.texture)
+function LoadableObject:baseString()
+	return self.name .. " : " .. self.class ..
+	"\n\ttexture " .. tostring(self.texture)
 end
 
 -- A Solid Class 
@@ -136,7 +149,7 @@ end
 function loadObjects()
 	for k, v in pairs(allObjects) do
 		if getmetatable(v) == ScriptCollider then
-			id = DrawBlock(v.position, v.size, false, v.texture)
+			local id = DrawBlock(v.position, v.size, false, v.texture)
 			AddCollider(v, id)
 		else
 			DrawBlock(v.position, v.size, true, v.texture)
@@ -148,43 +161,70 @@ end
 range = 2
 objectType = 1
 
-objectAddFunctions = {
-	function(norm, pos) -- Add Solid
-		obj = Solid:new{position = norm * range + pos, size = Vector:new{x = 25, y = 2, z = 25}, texture = 0}
-		table.insert(allObjects, obj)
-	
-		DrawBlock(obj.position, obj.size, true, obj.texture)
-	end, 
-	function(norm, pos) -- Add Normal Coint
-		obj = ScriptCollider:new{position = norm * range + pos, size = Vector:new{x = 5, y = 5, z = 1},
-								 texture = 1, id = #allObjects, name = "NormalCoin"}
-		Log("Id: " .. id)
-		table.insert(allObjects, obj)
-		
-		id = DrawBlock(obj.position, obj.size, false, obj.texture)
-		AddCollider(obj, id)
+initObject = {
+	function(norm, pos) -- Add Platform
+		return Solid:new{position = pos + norm * range,
+						size = Vector:new{x = 25, y = 0.1, z = 25},
+						texture = 0,
+						name = "platform"}
+	end,
+	function(norm, pos) -- Add Normal Coin
+		return ScriptCollider:new{position =  pos + norm * range,
+								 size = Vector:new{x = 5, y = 5, z = 1},
+								 texture = 1,
+								 id = #allObjects,
+								 name = "NormalCoin"}
+	end,
+	function(norm, pos) -- Add Normal Coin
+		return ScriptCollider:new{position =  pos + norm * range,
+								 size = Vector:new{x = 1, y = 5, z = 5},
+								 texture = 1,
+								 id = #allObjects,
+								 name = "NormalCoin"}
 	end
 }
 
+buildObject = {}
+
+buildObject["platform"] = function(obj) -- Add platform
+		DrawBlock(obj.position, obj.size, true, obj.texture)
+end
+
+buildObject["NormalCoin"] = function(obj) -- Add Normal Coint
+	local id = DrawBlock(obj.position, obj.size, false, obj.texture)
+	AddCollider(obj, id)
+end
+
 function increaseRange()
-	Log("Range: " .. range)
-	range = range + 0.05
+	range = range + 0.25
 end
 
 function decreaseRange()
-	Log("Range: " .. range)
-	range = range - 0.05
+	range = range - 0.25
 end
 
 function switchObjectType()
-	Log("Type: " .. objectType)
 	objectType = objectType + 1
-	if (objectType > #objectAddFunctions) then
+	if (objectType > #initObject) then
 		objectType = 1
 	end
 end
 
+-- Called when in building gamestate
+function onBuildingUpdate(inX, inY, inZ, pX, pY, pZ)
+	local normal = Vector:new{x = inX, y = inY, z = inZ}
+	local playerPosition = Vector:new{x = pX, y = pY, z = pZ}
+	
+	local object = initObject[objectType](normal, playerPosition)
+	DrawBuildingBlock(object.position, object.size, object.texture)
+end
+
 function placeObject(inX, inY, inZ, pX, pY, pZ)
-	objectAddFunctions[objectType](Vector:new{x = inX, y = inY, z = inZ},
-								   Vector:new{x = pX, y = pY, z = pZ})
+	local normal = Vector:new{x = inX, y = inY, z = inZ}
+	local playerPosition = Vector:new{x = pX, y = pY, z = pZ}
+	
+	local object = initObject[objectType](normal, playerPosition)
+	table.insert(allObjects, object)
+	
+	buildObject[object.name](object)
 end

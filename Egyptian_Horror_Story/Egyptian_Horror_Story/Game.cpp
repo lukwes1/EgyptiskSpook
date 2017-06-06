@@ -1,6 +1,8 @@
 #include "Game.h"
 #include "ParticleRenderer.h"
 
+#define DEFAULT_MAP_PATH "../Resource/Map/mapTest.lwm"
+
 void Game::setupRenderers()
 {
 	mGuiRenderer = new GUIRenderer();
@@ -24,7 +26,6 @@ void Game::setupEntityHandler()
 		this->mCamera);
 
 	this->mEntityHandler->setupEntities(this->mGraphics->getDevice());
-	this->mEntityHandler->setDevice(this->mGraphics->getDevice());
 
 	//this is neccessary for the traps
 //	this->mAIHandler = new AIHandler(mEntityHandler->getEnemy(), mEntityHandler->getPlayer());
@@ -36,7 +37,7 @@ void Game::setupEntityHandler()
 
 	luaHandler.loadLua("scripts/ScriptObjects.lua");
 	mapLoader.setupMapLoader(mEntityHandler, &luaHandler);
-	mapLoader.loadMap("../Resource/Map/mapTest.lwm");
+	mapLoader.loadMap(DEFAULT_MAP_PATH);
 }
 
 Game::Game(GraphicsHandler* mGraphicsHandler, OptionsHandler* options) {
@@ -100,6 +101,21 @@ bool Game::handleKeyboardPress(SDL_KeyboardEvent const& key)
 			this->mGraphics->getDeviceContext(), 
 			this->mOptionHandler->getGraphicSettings());
 		break;
+	case BUILDKEY:
+		{
+			GAMESTATE state = mStateHandler->getState();
+			if (state == GAMESTATE::PLAY)
+				mStateHandler->setState(GAMESTATE::BUILDING);
+			else if (state == GAMESTATE::BUILDING)
+				mStateHandler->setState(GAMESTATE::PLAY);
+			break;
+		}
+	case SAVEKEY:
+		{
+			if (mapLoader.isMapLoaderLoaded())
+				mapLoader.saveMap(DEFAULT_MAP_PATH);
+			break;
+		}
 	}
 
 	this->mapLoader.handleMouseEvents(
@@ -156,6 +172,13 @@ void Game::StateHandler::update(Game* g, float dt) {
 		break;
 	case GAMESTATE::PLAY:
 		g->updateGame(dt);
+		break;
+	case GAMESTATE::BUILDING:
+		g->updateGame(dt);
+		g->mapLoader.buildingModeUpdate(
+			g->mCamera->getForward(),
+			g->mEntityHandler->getPlayer()->getPosition()
+		);
 		break;
 	}
 }

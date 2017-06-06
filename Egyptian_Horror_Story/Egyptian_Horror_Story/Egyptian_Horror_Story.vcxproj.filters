@@ -96,6 +96,9 @@
     <FxCompile Include="GUIGS.hlsl">
       <Filter>Resource Files\GUI Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="BuildEntityPS.hlsl">
+      <Filter>Resource Files\Entity Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

@@ -1,13 +1,27 @@
 platform : Solid
-	texture 1
-	position 50 2 50
-	size 25 5 25
+	texture 0
+	position -0.8313399553299 -2.9248643517494 -19.806596279144
+	size 25 0.1 25
 end
 
 NormalCoin : ScriptCollider
-	texture 0
-	id "0"
-	position 65 2 65
+	texture 1
+	id "1"
+	position 7.7708315849304 2.5086833238602 -18.568133831024
 	size 5 5 1
+end
+
+NormalCoin : ScriptCollider
+	texture 1
+	id "2"
+	position -7.3881683349609 2.0917378664017 -18.738504886627
+	size 5 5 1
+end
+
+NormalCoin : ScriptCollider
+	texture 1
+	id "3"
+	position 1.667798101902 2.0917378664017 -19.850431442261
+	size 1 5 5
 end
 

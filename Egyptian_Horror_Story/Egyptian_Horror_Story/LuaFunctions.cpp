@@ -41,7 +41,7 @@ int LuaFunctions::drawBlock(lua_State *state) {
 	EntityHandler *entityHandler = getuserdata(state, EntityHandler*, 1);
 	float pos[3] = { 0,0,0 }, size[3] = { 0,0,0 };
 
-	if (lua_istable(state, -3) && lua_istable(state, -4)
+	if (lua_istable(state, -4) && lua_istable(state, -3)
 		&& lua_isboolean(state, -2) && lua_isnumber(state, -1)) { // lua_isinteger doesnt work`? :/
 		int texId = lua_tointeger(state, -1); //to does tho :)
 		lua_pop(state, 1);
@@ -60,6 +60,24 @@ int LuaFunctions::drawBlock(lua_State *state) {
 		return 1;
 	} else
 		return 0;
+}
+
+int LuaFunctions::drawBuildingBlock(lua_State *state) {
+	EntityHandler *entityHandler = getuserdata(state, EntityHandler*, 1);
+	float pos[3] = { 0,0,0 }, size[3] = { 0,0,0 };
+
+	if (lua_istable(state, -3) && lua_istable(state, -2) && lua_isnumber(state, -1)) { // lua_isinteger doesnt work`? :/
+		int texId = lua_tointeger(state, -1);
+		lua_pop(state, 1);
+
+		loadSizeAndPosition(state, pos, size);
+		Vector3 pos(pos[0], pos[1], pos[2]);
+		Vector3 size(size[0], size[1], size[2]);
+
+		int gId = entityHandler->updateBuildBlock(pos, size, texId);
+		lua_pop(state, 2); //pop the two tables
+	}
+	return 0;
 }
 
 void LuaFunctions::addFunction(lua_State *state,

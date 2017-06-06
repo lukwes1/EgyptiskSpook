@@ -27,7 +27,6 @@ private:
 	ID3D11ShaderResourceView* mSRVShadow;
 	OptionsHandler* mOptions;
 
-
 	std::vector<Renderer*> mRenderers;
 
 	void createDepthStencil();

@@ -21,6 +21,22 @@ LuaMapLoader::~LuaMapLoader()
 		lua_close(state);
 }
 
+void LuaMapLoader::buildingModeUpdate(
+	DirectX::SimpleMath::Vector3 const &norm,
+	DirectX::SimpleMath::Vector3 const &pos) {
+	lua_getglobal(state, "onBuildingUpdate");
+
+	lua_pushnumber(state, norm.x);
+	lua_pushnumber(state, norm.y);
+	lua_pushnumber(state, norm.z);
+
+	lua_pushnumber(state, pos.x);
+	lua_pushnumber(state, pos.y);
+	lua_pushnumber(state, pos.z);
+
+	LuaFunctions::handleError(state, lua_pcall(state, 6, 0, 0));
+}
+
 void LuaMapLoader::setupMapLoader(EntityHandler *entities, LuaHandler *luaHandler) {
 	this->entities = entities;
 	this->luaHandler = luaHandler;
@@ -43,6 +59,8 @@ void LuaMapLoader::loadFunctions() {
 	void *data[] = {entities};
 	LuaFunctions::addFunctionClosure(state, LuaFunctions::drawBlock,
 		"DrawBlock", data, ARRAYSIZE(data));
+	LuaFunctions::addFunctionClosure(state, LuaFunctions::drawBuildingBlock,
+		"DrawBuildingBlock", data, ARRAYSIZE(data));
 	data[0] = { luaHandler };
 	LuaFunctions::addFunctionClosure(state, LuaFunctions::addCollider,
 		"AddCollider", data, ARRAYSIZE(data));
@@ -55,6 +73,18 @@ void LuaMapLoader::loadMap(char const *path) {
 
 		if (LuaFunctions::handleError(state, lua_pcall(state, 1, 0, 0))) {
 			// map loaded! i hope.. ??
+
+		}
+	}
+}
+
+void LuaMapLoader::saveMap(char const *path) {
+	if (mapLoaderLoaded) {
+		lua_getglobal(state, "saveMap");
+		lua_pushstring(state, path);
+
+		if (LuaFunctions::handleError(state, lua_pcall(state, 1, 0, 0))) {
+			// map saved! i hope.. ??
 
 		}
 	}

@@ -8,6 +8,7 @@ enum GAMESTATE {
 	DEFAULT,
 	MAIN_MENU,
 	PLAY,
+	BUILDING,
 	UNDEFINED //Renderer can be used for multiple purposes
 };
 

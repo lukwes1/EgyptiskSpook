@@ -5,13 +5,26 @@
 #include "GraphicsData.h"
 #include "SimpleMath.h"
 
+/* LUA TESTING */
+#define PLANE_TEST 101000
 
 class EntityRenderer : public Renderer
 {
+public:
+	static const int BUILD_KEY = 50000;
 private:
 	GraphicsData mGraphicsData;
 	bool shadowPass;
 
+	/* For Building */
+	struct plane {
+		DirectX::SimpleMath::Vector4 normal, position;
+	} p1;
+
+	ID3D11BlendState* mBlendState;
+	ID3D11RasterizerState *mRastState;
+
+	void createBlendState(ID3D11Device* device);
 public:
 	EntityRenderer(GAMESTATE identifier);
 	virtual ~EntityRenderer();

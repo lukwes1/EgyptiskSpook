@@ -30,15 +30,19 @@ private:
 	EntityRenderer* mEntityRenderer;
 
 	ID3D11Device *device;
+	ID3D11DeviceContext *context;
 
 	bool footstepsPlaying;
 	int mNrOfKeys;
 
-	void hardcodedMap(ID3D11Device* device);
+	/* LUA BUILDING */
+	Entity *toBuild;
+
 	void loadEntityModel(std::string modelName, wchar_t* textureName, Entity* entity, ID3D11Device* device);
 	void updateAudio();
 	void updateCollision();
 	void detectCloseTreasures();
+	void createBuildCube();
 
 	float getPlayerGroundY(DirectX::SimpleMath::Vector3 const &pos) const;
 public:
@@ -47,6 +51,7 @@ public:
 
 	void loadMap(ID3D11Device* device);
 	void setDevice(ID3D11Device *device);
+	void setDeviceContext(ID3D11DeviceContext *context);
 
 	void setupTraps(AIHandler* ai, ID3D11Device* device, ID3D11DeviceContext* context);
 	void setupPlayer(ID3D11Device* device, ID3D11DeviceContext* context, CameraClass* camera);
@@ -57,11 +62,17 @@ public:
 
 	int addBlock(DirectX::SimpleMath::Vector3 position, DirectX::SimpleMath::Vector3 size,
 		AABB *aabb, bool solid, int textureId);
+	int updateBuildBlock(DirectX::SimpleMath::Vector3 position,
+		DirectX::SimpleMath::Vector3 size,
+		int textureId);
 
 	EntityRenderer* getEntityRenderer();
 	Player* getPlayer();
 	Enemy* getEnemy();
 	Entity* getEntity(int index) const;
+
+	void setToBuildEntity(Entity *entity);
+	Entity *getToBuildEntity() const;
 };
 
 

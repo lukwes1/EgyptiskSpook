@@ -20,10 +20,18 @@ private:
 public:
 	LuaMapLoader();
 	~LuaMapLoader();
+
+	void buildingModeUpdate(
+		DirectX::SimpleMath::Vector3 const &norm,
+		DirectX::SimpleMath::Vector3 const &pos
+	);
 	
 	void setupMapLoader(EntityHandler *entities, LuaHandler *luaHandler);
 	void loadFunctions();
+
 	void loadMap(char const *path);
+	void saveMap(char const *path);
+
 	void handleMouseEvents(SDL_Scancode const &code,
 						   DirectX::SimpleMath::Vector3 const &norm,
 						   DirectX::SimpleMath::Vector3 const &pos);

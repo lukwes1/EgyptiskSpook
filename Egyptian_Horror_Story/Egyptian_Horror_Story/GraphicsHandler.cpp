@@ -46,7 +46,6 @@ void GraphicsHandler::createDepthStencil()
 	this->mContext->OMSetDepthStencilState(this->mDSS, 0);
 
 	texture->Release();
-
 }
 
 GraphicsHandler::GraphicsHandler(OptionsHandler* options)
@@ -75,7 +74,6 @@ GraphicsHandler::~GraphicsHandler() {
 
 	if (mDSS)
 		mDSS->Release();
-
 	if (mDSV)
 		mDSV->Release();
 

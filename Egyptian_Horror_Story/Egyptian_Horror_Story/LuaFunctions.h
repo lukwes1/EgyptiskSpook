@@ -17,6 +17,7 @@ public:
 
 	static int Log(lua_State *state);
 	static int drawBlock(lua_State *state);
+	static int drawBuildingBlock(lua_State *state);
 	static int addCollider(lua_State *state);
 	static bool handleError(lua_State *state, int error);
 
