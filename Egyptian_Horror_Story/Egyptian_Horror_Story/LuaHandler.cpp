@@ -37,9 +37,9 @@ void LuaHandler::addCollider(Collider const &collider) {
 		lua_getglobal(state, method.c_str());
 
 		if (lua_isfunction(state, -1)) {
-			lua_pushstring(state, collider.id);
+			lua_pushstring(state, collider.id.c_str());
 			lua_pushinteger(state, collider.gId);
-			lua_pcall(state, 2, 0, 0);
+			LuaFunctions::handleError(state, lua_pcall(state, 2, 0, 0));
 		}
 	}
 
@@ -62,7 +62,7 @@ void LuaHandler::update() {
 		for (auto& collider : colliders) {
 			if (collider.aabb->aabbVSCapsule(*player->col)) {
 				lua_getglobal(state, "onPlayerCollision");
-				lua_pushstring(state, collider.id);
+				lua_pushstring(state, collider.id.c_str());
 				LuaFunctions::handleError(state, lua_pcall(state, 1, 0, 0));
 			}
 		}

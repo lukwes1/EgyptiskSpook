@@ -13,7 +13,7 @@ class LuaHandler
 public:
 	struct Collider {
 		int gId;
-		char const *id;
+		std::string id;
 		DirectX::SimpleMath::Vector3 position, size;
 		char const *name;
 		AABB *aabb = nullptr;

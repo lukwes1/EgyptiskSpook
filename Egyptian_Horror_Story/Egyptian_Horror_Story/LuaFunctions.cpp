@@ -105,7 +105,7 @@ int LuaFunctions::addCollider(lua_State *state) {
 
 		/** LOAD POSITION AND SIZE VECTORS */
 		float pos[3] = { 0,0,0 }, size[3] = { 0,0,0 };
-		char const *name = "", *id = "";
+		char const *name = "";
 
 		lua_pushstring(state, "position");
 		lua_gettable(state, -2);
@@ -126,22 +126,21 @@ int LuaFunctions::addCollider(lua_State *state) {
 		}
 		lua_pop(state, 1);
 
-		lua_pushstring(state, "id");
-		lua_gettable(state, -2);
-
-		if (lua_isstring(state, -1))
-			id = lua_tostring(state, -1);
-		else if (lua_isnumber(state, -1)) // A Bad solution for a bad problem
-			id = std::to_string(static_cast<int> (lua_tonumber(state, -1))).c_str();
-		lua_pop(state, 1);
-
 		LuaHandler::Collider collider;
 		collider.position = Vector3(pos[0], pos[1], pos[2]);
 		collider.size = Vector3(size[0], size[1], size[2]);
 		collider.name = name;
-		collider.id = id;
 		collider.gId = gId;
 
+		lua_pushstring(state, "id");
+		lua_gettable(state, -2);
+
+		if (lua_isstring(state, -1))
+			collider.id = lua_tostring(state, -1);
+		else if (lua_isnumber(state, -1)) // A Bad solution for a bad problem
+			collider.id = std::to_string(static_cast<int> (lua_tonumber(state, -1)));
+		lua_pop(state, 1);
+		
 		handler->addCollider(collider);
 	}
 	lua_pop(state, 1);

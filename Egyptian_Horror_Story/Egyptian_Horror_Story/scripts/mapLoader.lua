@@ -158,26 +158,26 @@ function loadObjects()
 end
 
 -- Map Builder
-range = 2
+range = 10
 objectType = 1
 
 initObject = {
 	function(norm, pos) -- Add Platform
 		return Solid:new{position = pos + norm * range,
-						size = Vector:new{x = 25, y = 0.1, z = 25},
+						size = Vector:new{x = 25, y = 0.3, z = 25},
 						texture = 0,
 						name = "platform"}
 	end,
 	function(norm, pos) -- Add Normal Coin
 		return ScriptCollider:new{position =  pos + norm * range,
-								 size = Vector:new{x = 5, y = 5, z = 1},
+								 size = Vector:new{x = 5, y = 5, z = 0.2},
 								 texture = 1,
 								 id = #allObjects,
 								 name = "NormalCoin"}
 	end,
 	function(norm, pos) -- Add Normal Coin
 		return ScriptCollider:new{position =  pos + norm * range,
-								 size = Vector:new{x = 1, y = 5, z = 5},
+								 size = Vector:new{x = 0.2, y = 5, z = 5},
 								 texture = 1,
 								 id = #allObjects,
 								 name = "NormalCoin"}

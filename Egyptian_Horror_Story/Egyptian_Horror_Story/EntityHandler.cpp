@@ -270,6 +270,9 @@ void EntityHandler::update(ID3D11DeviceContext* context, float dt)
 
 	DirectX::SimpleMath::Vector3 prevPos = this->mPlayer->getPosition();
 	this->mPlayer->updatePosition(dt, getPlayerGroundY(mPlayer->getPosition()));
+
+	for (auto& entity : mEntities)
+		entity->updateTransformBuffer(context, mEntityRenderer->getGraphicsData());
 }
 
 float EntityHandler::getPlayerGroundY(Vector3 const &position) const {
