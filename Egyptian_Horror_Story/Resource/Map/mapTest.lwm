@@ -162,3 +162,38 @@ Trampoline : ScriptCollider
 	size 3 3 3
 end
 
+NormalCoin : ScriptCollider
+	texture 1
+	id "24"
+	position -52.981284245849 33.845399726182 22.109014064074
+	size 5 5 0.5
+end
+
+Trampoline : ScriptCollider
+	texture 2
+	id "25"
+	position -50.679658338428 33.000289388001 24.999033302069
+	size 3 3 3
+end
+
+Trampoline : ScriptCollider
+	texture 2
+	id "26"
+	position -47.882994934916 40.604592785239 27.943588659167
+	size 3 3 3
+end
+
+Trampoline : ScriptCollider
+	texture 2
+	id "27"
+	position -58.011823952198 48.915464997292 20.919569790363
+	size 3 3 3
+end
+
+Trampoline : ScriptCollider
+	texture 2
+	id "28"
+	position -51.998851716518 58.085634827614 30.297793224454
+	size 3 3 3
+end
+
